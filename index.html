@@ -170,6 +170,23 @@ nav .links a:hover { color: var(--accent); background: rgba(30,58,95,0.06); }
 
 .hero .actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
 
+/* Hero two-column layout: text left, load-the-data card right */
+.hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; text-align: left; }
+.hero-grid .hero-left { text-align: left; }
+.hero-grid .hero-left h1 { margin: 24px 0 16px; }
+.hero-grid .hero-left .tagline { margin: 0 0 32px; }
+.hero-grid .hero-left .actions { justify-content: flex-start; }
+.hero-code { background: var(--card-bg, #fff); border: 1px solid rgba(0,0,0,0.08); border-radius: 12px; padding: 18px 20px 8px; box-shadow: 0 2px 14px rgba(0,0,0,0.05); }
+.hero-code .hero-code-title { font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 10px; }
+.hero-code pre { font-size: 12.5px; line-height: 1.55; overflow-x: auto; margin: 0 0 10px; }
+@media (max-width: 920px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 36px; text-align: center; }
+  .hero-grid .hero-left { text-align: center; }
+  .hero-grid .hero-left h1 { margin: 24px auto 16px; }
+  .hero-grid .hero-left .tagline { margin: 0 auto 32px; }
+  .hero-grid .hero-left .actions { justify-content: center; }
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -873,6 +890,8 @@ footer .footer-bottom .brand {
 <!-- HERO -->
 <header class="hero" id="overview">
   <div class="container">
+    <div class="hero-grid">
+    <div class="hero-left">
     <div class="pkg-name">distributional-dynamics</div>
     <h1>High-Frequency Synthetic Distributions of Consumption, Income, and Wealth</h1>
     <p class="authors">
@@ -890,6 +909,61 @@ footer .footer-bottom .brand {
       <a href="https://github.com/LuisCald/DD_data" target="_blank" class="btn btn-outline">Download Synthetic Data</a>
     </div>
     <span class="badge">1962&ndash;2024 &middot; Quarterly &middot; PSID, SCF, CEX, SIPP, CPS</span>
+    </div>
+    <div class="hero-code">
+      <div class="hero-code-title">Load the data — one line</div>
+<div class="code-tabs">
+      <button class="code-tab active" data-lang="julia" onclick="switchCodeTab('julia')">Julia</button>
+      <button class="code-tab" data-lang="python" onclick="switchCodeTab('python')">Python</button>
+      <button class="code-tab" data-lang="stata" onclick="switchCodeTab('stata')">Stata</button>
+    </div>
+
+    <div class="code-panel active" id="code-julia">
+<pre class=""><span class="code-keyword">using</span> CSV, DataFrames
+
+<span class="code-comment"># Load the consensus functional data</span>
+df = CSV.read(<span class="code-string">"consensus_functional_data.csv"</span>, DataFrame)
+
+<span class="code-comment"># Extract income shares at the median</span>
+income_median = df[!, <span class="code-string">"sharesincome_0.5"</span>]
+
+<span class="code-comment"># Plot consumption quantiles over time</span>
+<span class="code-keyword">using</span> Plots
+plot(df.time, df[!, <span class="code-string">"quantilesconsum_0.5"</span>],
+     label=<span class="code-string">"Median"</span>, xlabel=<span class="code-string">"Quarter"</span>)</pre>
+    </div>
+
+    <div class="code-panel" id="code-python">
+<pre class=""><span class="code-keyword">import</span> pandas <span class="code-keyword">as</span> pd
+
+<span class="code-comment"># Load the consensus functional data</span>
+df = pd.read_csv(<span class="code-string">"consensus_functional_data.csv"</span>)
+
+<span class="code-comment"># Extract income shares at the median</span>
+income_median = df[<span class="code-string">"sharesincome_0.5"</span>]
+
+<span class="code-comment"># Plot consumption quantiles over time</span>
+<span class="code-keyword">import</span> matplotlib.pyplot <span class="code-keyword">as</span> plt
+plt.plot(df[<span class="code-string">"time"</span>], df[<span class="code-string">"quantilesconsum_0.5"</span>],
+         label=<span class="code-string">"Median"</span>)
+plt.xlabel(<span class="code-string">"Quarter"</span>); plt.legend(); plt.show()</pre>
+    </div>
+
+    <div class="code-panel" id="code-stata">
+<pre class=""><span class="code-comment">* Reconstructed series: one row per quarter, ~400 labeled variables</span>
+<span class="code-keyword">use</span> <span class="code-string">"https://www.distributionaldynamics.com/data/dd_series.dta"</span>, clear
+<span class="code-keyword">gen</span> t = yq(year, quarter)
+<span class="code-keyword">format</span> t %tq
+<span class="code-keyword">tsset</span> t
+<span class="code-keyword">tsline</span> wealth_share_top_psid
+
+<span class="code-comment">* Synthetic microdata (master file): 247,000 weighted observations</span>
+<span class="code-keyword">use</span> <span class="code-string">"https://www.distributionaldynamics.com/data/dd_master.dta"</span>, clear
+<span class="code-keyword">mean</span> wealth [aw=cop_share], over(time)</pre>
+    </div>
+
+    </div>
+    </div>
   </div>
 </header>
 
@@ -1098,57 +1172,6 @@ footer .footer-bottom .brand {
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
         Replication Code
       </a>
-    </div>
-
-    <h3 style="margin-top:36px">Loading the Data</h3>
-    <div class="code-tabs">
-      <button class="code-tab active" data-lang="julia" onclick="switchCodeTab('julia')">Julia</button>
-      <button class="code-tab" data-lang="python" onclick="switchCodeTab('python')">Python</button>
-      <button class="code-tab" data-lang="stata" onclick="switchCodeTab('stata')">Stata</button>
-    </div>
-
-    <div class="code-panel active" id="code-julia">
-<pre class=""><span class="code-keyword">using</span> CSV, DataFrames
-
-<span class="code-comment"># Load the consensus functional data</span>
-df = CSV.read(<span class="code-string">"consensus_functional_data.csv"</span>, DataFrame)
-
-<span class="code-comment"># Extract income shares at the median</span>
-income_median = df[!, <span class="code-string">"sharesincome_0.5"</span>]
-
-<span class="code-comment"># Plot consumption quantiles over time</span>
-<span class="code-keyword">using</span> Plots
-plot(df.time, df[!, <span class="code-string">"quantilesconsum_0.5"</span>],
-     label=<span class="code-string">"Median"</span>, xlabel=<span class="code-string">"Quarter"</span>)</pre>
-    </div>
-
-    <div class="code-panel" id="code-python">
-<pre class=""><span class="code-keyword">import</span> pandas <span class="code-keyword">as</span> pd
-
-<span class="code-comment"># Load the consensus functional data</span>
-df = pd.read_csv(<span class="code-string">"consensus_functional_data.csv"</span>)
-
-<span class="code-comment"># Extract income shares at the median</span>
-income_median = df[<span class="code-string">"sharesincome_0.5"</span>]
-
-<span class="code-comment"># Plot consumption quantiles over time</span>
-<span class="code-keyword">import</span> matplotlib.pyplot <span class="code-keyword">as</span> plt
-plt.plot(df[<span class="code-string">"time"</span>], df[<span class="code-string">"quantilesconsum_0.5"</span>],
-         label=<span class="code-string">"Median"</span>)
-plt.xlabel(<span class="code-string">"Quarter"</span>); plt.legend(); plt.show()</pre>
-    </div>
-
-    <div class="code-panel" id="code-stata">
-<pre class=""><span class="code-comment">* Reconstructed series: one row per quarter, ~400 labeled variables</span>
-<span class="code-keyword">use</span> <span class="code-string">"https://www.distributionaldynamics.com/data/dd_series.dta"</span>, clear
-<span class="code-keyword">gen</span> t = yq(year, quarter)
-<span class="code-keyword">format</span> t %tq
-<span class="code-keyword">tsset</span> t
-<span class="code-keyword">tsline</span> wealth_share_top_psid
-
-<span class="code-comment">* Synthetic microdata (master file): 247,000 weighted observations</span>
-<span class="code-keyword">use</span> <span class="code-string">"https://www.distributionaldynamics.com/data/dd_master.dta"</span>, clear
-<span class="code-keyword">mean</span> wealth [aw=cop_share], over(time)</pre>
     </div>
 
     <p class="prose" style="margin-top:16px; font-size:0.9em">
