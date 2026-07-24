@@ -919,47 +919,38 @@ footer .footer-bottom .brand {
     </div>
 
     <div class="code-panel active" id="code-julia">
-<pre class=""><span class="code-keyword">using</span> CSV, DataFrames
+<pre class=""><span class="code-keyword">using</span> CSV, DataFrames, Downloads
 
-<span class="code-comment"># Load the consensus functional data</span>
-df = CSV.read(<span class="code-string">"consensus_functional_data.csv"</span>, DataFrame)
+<span class="code-comment"># Reconstructed series: one row per quarter, harmonized names</span>
+df = CSV.read(Downloads.download(
+    <span class="code-string">"https://www.distributionaldynamics.com/data/dd_series.csv"</span>), DataFrame)
 
-<span class="code-comment"># Extract income shares at the median</span>
-income_median = df[!, <span class="code-string">"sharesincome_0.5"</span>]
-
-<span class="code-comment"># Plot consumption quantiles over time</span>
+<span class="code-comment"># Top-10% wealth share (PSID view), over time</span>
 <span class="code-keyword">using</span> Plots
-plot(df.time, df[!, <span class="code-string">"quantilesconsum_0.5"</span>],
-     label=<span class="code-string">"Median"</span>, xlabel=<span class="code-string">"Quarter"</span>)</pre>
+plot(df.time, df.wealth_share_top_psid, xlabel=<span class="code-string">"Quarter"</span>,
+     label=<span class="code-string">"Top wealth share"</span>)</pre>
     </div>
 
     <div class="code-panel" id="code-python">
 <pre class=""><span class="code-keyword">import</span> pandas <span class="code-keyword">as</span> pd
 
-<span class="code-comment"># Load the consensus functional data</span>
-df = pd.read_csv(<span class="code-string">"consensus_functional_data.csv"</span>)
+<span class="code-comment"># Reconstructed series: one row per quarter, harmonized names</span>
+df = pd.read_csv(<span class="code-string">"https://www.distributionaldynamics.com/data/dd_series.csv"</span>)
 
-<span class="code-comment"># Extract income shares at the median</span>
-income_median = df[<span class="code-string">"sharesincome_0.5"</span>]
-
-<span class="code-comment"># Plot consumption quantiles over time</span>
+<span class="code-comment"># Top-10% wealth share (PSID view), over time</span>
 <span class="code-keyword">import</span> matplotlib.pyplot <span class="code-keyword">as</span> plt
-plt.plot(df[<span class="code-string">"time"</span>], df[<span class="code-string">"quantilesconsum_0.5"</span>],
-         label=<span class="code-string">"Median"</span>)
-plt.xlabel(<span class="code-string">"Quarter"</span>); plt.legend(); plt.show()</pre>
+plt.plot(df[<span class="code-string">"time"</span>], df[<span class="code-string">"wealth_share_top_psid"</span>])
+plt.xlabel(<span class="code-string">"Quarter"</span>); plt.show()</pre>
     </div>
 
     <div class="code-panel" id="code-stata">
-<pre class=""><span class="code-comment">* Reconstructed series: one row per quarter, ~400 labeled variables</span>
+<pre class=""><span class="code-comment">* Reconstructed series: one row per quarter, labeled variables</span>
 <span class="code-keyword">use</span> <span class="code-string">"https://www.distributionaldynamics.com/data/dd_series.dta"</span>, clear
 <span class="code-keyword">gen</span> t = yq(year, quarter)
-<span class="code-keyword">format</span> t %tq
-<span class="code-keyword">tsset</span> t
-<span class="code-keyword">tsline</span> wealth_share_top_psid
+<span class="code-keyword">tsset</span> t, quarterly
 
-<span class="code-comment">* Synthetic microdata (master file): 247,000 weighted observations</span>
-<span class="code-keyword">use</span> <span class="code-string">"https://www.distributionaldynamics.com/data/dd_master.dta"</span>, clear
-<span class="code-keyword">mean</span> wealth [aw=cop_share], over(time)</pre>
+<span class="code-comment">* Top-10% wealth share (PSID view), over time</span>
+<span class="code-keyword">tsline</span> wealth_share_top_psid</pre>
     </div>
 
     </div>
