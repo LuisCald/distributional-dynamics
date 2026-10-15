@@ -170,22 +170,24 @@ nav .links a:hover { color: var(--accent); background: rgba(30,58,95,0.06); }
 
 .hero .actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
 
-/* Hero two-column layout: text left, load-the-data card right */
-.hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; text-align: left; }
-.hero-grid .pkg-name { font-size: 34px; white-space: nowrap; }
-.hero-grid .hero-left { text-align: left; }
-.hero-grid .hero-left h1 { margin: 24px 0 16px; }
-.hero-grid .hero-left .tagline { margin: 0 0 32px; }
-.hero-grid .hero-left .actions { justify-content: flex-start; }
-.hero-code { background: var(--card-bg, #fff); border: 1px solid rgba(0,0,0,0.08); border-radius: 12px; padding: 18px 20px 8px; box-shadow: 0 2px 14px rgba(0,0,0,0.05); }
-.hero-code .hero-code-title { font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 10px; }
-.hero-code pre { font-size: 12.5px; line-height: 1.55; overflow-x: auto; margin: 0 0 10px; }
-@media (max-width: 920px) {
-  .hero-grid { grid-template-columns: 1fr; gap: 36px; text-align: center; }
-  .hero-grid .hero-left { text-align: center; }
-  .hero-grid .hero-left h1 { margin: 24px auto 16px; }
-  .hero-grid .hero-left .tagline { margin: 0 auto 32px; }
-  .hero-grid .hero-left .actions { justify-content: center; }
+/* Hero: one centered column — title, tagline, authors, load-the-data card, buttons */
+.hero .tagline { margin: 0 auto 18px; }
+.hero .authors { margin-bottom: 36px; }
+.hero-load-title {
+  font-family: var(--font-serif);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--accent);
+  margin: 0 0 18px;
+  letter-spacing: -0.01em;
+}
+.hero-code { max-width: 860px; margin: 0 auto 40px; text-align: left; background: var(--card-bg, #fff); border: 1px solid rgba(0,0,0,0.08); border-radius: 12px; padding: 14px 24px 10px; box-shadow: 0 2px 14px rgba(0,0,0,0.05); }
+.hero-code pre { font-size: 13.5px; line-height: 1.6; overflow-x: auto; margin: 0 0 10px; }
+@media (max-width: 720px) {
+  .hero-load-title { font-size: 28px; }
+  .hero-code { padding: 12px 14px 8px; }
+  .hero-code pre { font-size: 12px; }
 }
 
 .btn {
@@ -891,28 +893,17 @@ footer .footer-bottom .brand {
 <!-- HERO -->
 <header class="hero" id="overview">
   <div class="container-wide">
-    <div class="hero-grid">
-    <div class="hero-left">
     <div class="pkg-name">distributional-dynamics</div>
     <h1>High-Frequency Synthetic Distributions of Consumption, Income, and Wealth</h1>
+    <p class="tagline">Quarterly estimates from 1962 to 2024 combining functional data analysis and Bayesian state-space models</p>
     <p class="authors">
       Christian Bayer <span class="affil">(Bonn, CEPR, IZA, CESifo)</span>,
       Luis Calderon <span class="affil">(Bonn)</span>,
       Moritz Kuhn <span class="affil">(Mannheim, CEPR, IZA, CESifo)</span>
     </p>
-    <p class="tagline">Quarterly estimates from 1962 to 2024 combining functional data analysis and Bayesian state-space models</p>
-    <div class="actions">
-      <a href="pdfs/BCK_DistributionalDynamics.pdf" target="_blank" class="btn btn-primary">Read the Paper</a>
-      <a href="https://github.com/LuisCald/DD_replication" target="_blank" class="btn btn-outline">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-        GitHub
-      </a>
-      <a href="https://github.com/LuisCald/DD_data" target="_blank" class="btn btn-outline">Download Synthetic Data</a>
-    </div>
-    <span class="badge">1962&ndash;2024 &middot; Quarterly &middot; PSID, SCF, CEX, SIPP, CPS</span>
-    </div>
+
+    <h2 class="hero-load-title">Load the data in one line</h2>
     <div class="hero-code">
-      <div class="hero-code-title">Load the data — one line</div>
 <div class="code-tabs">
       <button class="code-tab active" data-lang="julia" onclick="switchCodeTab('julia')">Julia</button>
       <button class="code-tab" data-lang="python" onclick="switchCodeTab('python')">Python</button>
@@ -926,6 +917,10 @@ footer .footer-bottom .brand {
 df = CSV.read(Downloads.download(
     <span class="code-string">"https://www.distributionaldynamics.com/data/dd_series.csv"</span>), DataFrame)
 
+<span class="code-comment"># Balance-sheet items (SCF): real estate, mortgages, pensions, consumer credit</span>
+items = CSV.read(Downloads.download(
+    <span class="code-string">"https://www.distributionaldynamics.com/data/items/dd_items_SCF.csv"</span>), DataFrame)
+
 <span class="code-comment"># Top-10% wealth share (PSID view), over time</span>
 <span class="code-keyword">using</span> Plots
 plot(df.time, df.wealth_share_top_psid, xlabel=<span class="code-string">"Quarter"</span>,
@@ -937,6 +932,9 @@ plot(df.time, df.wealth_share_top_psid, xlabel=<span class="code-string">"Quarte
 
 <span class="code-comment"># Reconstructed series: one row per quarter, harmonized names</span>
 df = pd.read_csv(<span class="code-string">"https://www.distributionaldynamics.com/data/dd_series.csv"</span>)
+
+<span class="code-comment"># Balance-sheet items (SCF): real estate, mortgages, pensions, consumer credit</span>
+items = pd.read_csv(<span class="code-string">"https://www.distributionaldynamics.com/data/items/dd_items_SCF.csv"</span>)
 
 <span class="code-comment"># Top-10% wealth share (PSID view), over time</span>
 <span class="code-keyword">import</span> matplotlib.pyplot <span class="code-keyword">as</span> plt
@@ -951,11 +949,22 @@ plt.xlabel(<span class="code-string">"Quarter"</span>); plt.show()</pre>
 <span class="code-keyword">tsset</span> t, quarterly
 
 <span class="code-comment">* Top-10% wealth share (PSID view), over time</span>
-<span class="code-keyword">tsline</span> wealth_share_top_psid</pre>
+<span class="code-keyword">tsline</span> wealth_share_top_psid
+
+<span class="code-comment">* Balance-sheet items (SCF): real estate, mortgages, pensions, consumer credit (separate file)</span>
+<span class="code-keyword">use</span> <span class="code-string">"https://www.distributionaldynamics.com/data/items/dd_items_SCF.dta"</span>, clear</pre>
+    </div>
     </div>
 
+    <div class="actions">
+      <a href="pdfs/BCK_DistributionalDynamics.pdf" target="_blank" class="btn btn-primary">Read the Paper</a>
+      <a href="https://github.com/LuisCald/DD_replication" target="_blank" class="btn btn-outline">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        GitHub
+      </a>
+      <a href="https://github.com/LuisCald/DD_data" target="_blank" class="btn btn-outline">Download Synthetic Data</a>
     </div>
-    </div>
+    <span class="badge">1962&ndash;2024 &middot; Quarterly &middot; PSID, SCF, CEX, SIPP, CPS</span>
   </div>
 </header>
 
