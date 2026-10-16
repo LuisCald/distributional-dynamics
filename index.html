@@ -1096,7 +1096,7 @@ items = pd.read_csv(<span class="code-string">"https://www.distributionaldynamic
   <div class="container">
     <div class="section-label">Data &amp; Replication</div>
     <h2>Data Sources and Downloads</h2>
-    <p class="prose">Five U.S. household surveys (C = consumption, I = income, W = wealth; *PSID wealth from 1983, consumption from 1999):</p>
+    <p class="prose">Five U.S. household surveys (C = consumption, I = income, W = wealth; *PSID wealth from 1984, consumption from 1999):</p>
 
     <div class="timeline-wrapper">
       <div class="timeline-row">
@@ -1143,8 +1143,16 @@ items = pd.read_csv(<span class="code-string">"https://www.distributionaldynamic
 
 
     <p class="prose" style="margin-top:24px; font-size:0.9em">
-      <em>Uncertainty:</em> the series are posterior point estimates; posterior draws and bands are in
-      <a href="https://github.com/LuisCald/DD_data">DD_data</a>.
+      The downloads here are posterior point estimates. <a href="https://github.com/LuisCald/DD_data">DD_data</a> on GitHub also has:
+    </p>
+    <ul class="prose" style="font-size:0.9em; margin-top:4px; padding-left:1.2em">
+      <li>five implicates of the synthetic microdata, drawn from the posterior;</li>
+      <li>200 posterior draws of the factors, with 5/50/95% bands;</li>
+      <li>the Legendre coefficients of the joint distribution (PSID, SCF, CEX views);</li>
+      <li>scripts in Python and Julia to rebuild moments, microdata and bands from them.</li>
+    </ul>
+    <p class="prose" style="font-size:0.9em; margin-top:10px">
+      Estimation code and replication package: <a href="https://github.com/LuisCald/DD_replication">DD_replication</a>.
     </p>
   </div>
 </section>
