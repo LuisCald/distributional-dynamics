@@ -1,4 +1,4 @@
-"""Rebuild the Data Explorer's embedded data (const DATA / const BIVAR_DATA in index.html)
+"""Rebuild the Data Explorer's embedded data (const DATA in index.html; data/bivar.json)
 from the published data products, so the charts match the downloads.
 
     python3 tools/build_explorer_data.py            # reads data/dd_series.csv, data/dd_master.csv
@@ -46,7 +46,8 @@ def js(obj):                                         # JS literal: missing value
 
 s = open(HTML).read()
 s, n1 = re.subn(r"const DATA = \{.*?\};\n", lambda _: f"const DATA = {js(data)};\n", s, count=1, flags=re.S)
-s, n2 = re.subn(r"const BIVAR_DATA = \{.*?\};\n", lambda _: f"const BIVAR_DATA = {js(bivar)};\n", s, count=1, flags=re.S)
-assert n1 == n2 == 1
+assert n1 == 1
 open(HTML, "w").write(s)
+with open(os.path.join(ROOT, "data", "bivar.json"), "w") as f:   # loaded lazily by the joint-distribution tab
+    json.dump(bivar, f, separators=(",", ":"))
 print(f"DATA {data['t'][0]}..{data['t'][-1]} ({len(data['t'])} q); BIVAR {bivar['t'][0]}..{bivar['t'][-1]} ({len(bivar['t'])} q)")
