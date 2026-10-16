@@ -995,8 +995,8 @@ footer .footer-bottom .brand {
   <div class="nav-inner">
     <a href="#overview" class="brand">Distributional Dynamics</a>
     <div class="links">
-      <a href="#explorer">Explore</a>
       <a href="#data">Data</a>
+      <a href="#explorer">Explore</a>
       <a href="#methodology">Methodology</a>
       <a href="#citation">Cite</a>
     </div>
@@ -1052,6 +1052,102 @@ items = CSV.read(Downloads.download(url * <span class="code-string">"items/dd_it
     </div>
   </div>
 </header>
+
+<hr class="section-divider">
+
+<!-- DATA & REPLICATION -->
+<section id="data">
+  <div class="container">
+    <div class="section-label">Data &amp; Replication</div>
+    <h2>Data Sources and Downloads</h2>
+    <p class="prose">Five U.S. household surveys (C = consumption, I = income, W = wealth; *PSID wealth from 1984, consumption from 1999):</p>
+
+    <div class="timeline-wrapper">
+      <div class="timeline-row">
+        <div class="timeline-label">CPS</div>
+        <div class="timeline-bar-track">
+          <div class="timeline-bar" style="left:8.1%;right:3.2%;background:var(--accent)"></div>
+        </div>
+        <div class="timeline-bar-label">1967&ndash;2022 (I)</div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-label">PSID</div>
+        <div class="timeline-bar-track">
+          <div class="timeline-bar" style="left:9.7%;right:4.8%;background:#2c5282"></div>
+        </div>
+        <div class="timeline-bar-label">1968&ndash;2021 (I,W,C)*</div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-label">CEX</div>
+        <div class="timeline-bar-track">
+          <div class="timeline-bar" style="left:35.5%;right:4.8%;background:#3b6cb0"></div>
+        </div>
+        <div class="timeline-bar-label">1984&ndash;2021 (C,I)</div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-label">SCF</div>
+        <div class="timeline-bar-track">
+          <div class="timeline-bar" style="left:0%;right:3.2%;background:#4a7ec0"></div>
+        </div>
+        <div class="timeline-bar-label">1962&ndash;2022 (I,W)</div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-label">SIPP</div>
+        <div class="timeline-bar-track">
+          <div class="timeline-bar" style="left:33.9%;right:3.2%;background:#5a8ed0"></div>
+        </div>
+        <div class="timeline-bar-label">1983&ndash;2022 (I,W)</div>
+      </div>
+      <div class="timeline-scale">
+        <span>1962</span>
+        <span></span>
+        <span>2024</span>
+      </div>
+    </div>
+
+
+
+    <div class="dl-grid" id="downloads">
+      <div class="dl-card">
+        <h3>Main data</h3>
+        <div class="dl-row"><span class="dl-name">dd_series</span><a class="btn btn-outline btn-xs" href="data/dd_series.csv" download>CSV</a><a class="btn btn-outline btn-xs" href="data/dd_series.dta" download>Stata</a></div>
+        <div class="dl-row"><span class="dl-name">Synthetic microdata (dd_master)</span><a class="btn btn-outline btn-xs" href="data/dd_master.csv" download>CSV</a><a class="btn btn-outline btn-xs" href="data/dd_master.dta" download>Stata</a></div>
+        <div class="dl-row"><span class="dl-name">dd_tidy_long</span><a class="btn btn-outline btn-xs" href="data/dd_tidy_long.csv" download>CSV</a></div>
+        <p class="dl-note">dd_tidy_long: tidy long format; groups (bottom 50 / next 40 / top 10, quintiles, deciles) by survey.</p>
+      </div>
+      <div class="dl-card">
+        <h3>Balance sheets (DFA wealth groups)</h3>
+        <div class="dl-row"><span class="dl-name">All items</span><a class="btn btn-outline btn-xs" href="data/items/dd_items_SCF.csv" download>CSV</a><a class="btn btn-outline btn-xs" href="data/items/dd_items_SCF.dta" download>Stata</a></div>
+        <div class="dl-row"><span class="dl-name">By item (CSV)</span><a class="btn btn-outline btn-xs" href="data/items/real_estate_SCF.csv" download>Real estate</a><a class="btn btn-outline btn-xs" href="data/items/mortgages_SCF.csv" download>Mortgages</a><a class="btn btn-outline btn-xs" href="data/items/consumer_credit_SCF.csv" download>Consumer credit</a><a class="btn btn-outline btn-xs" href="data/items/pension_SCF.csv" download>Pensions</a><a class="btn btn-outline btn-xs" href="data/items/stocks_SCF.csv" download>Stocks*</a></div>
+        <p class="dl-note">*Stocks: next 40 and top 10 only. <a href="https://www.federalreserve.gov/releases/z1/dataviz/dfa/" target="_blank" rel="noopener">Compare: Fed DFA</a></p>
+      </div>
+      <div class="dl-card">
+        <h3>Uncertainty</h3>
+        <div class="dl-row"><span class="dl-name">Microdata implicates</span><a class="btn btn-outline btn-xs" href="data/implicates/PSID_synthetic_microdata_imp1.csv" download>1</a><a class="btn btn-outline btn-xs" href="data/implicates/PSID_synthetic_microdata_imp2.csv" download>2</a><a class="btn btn-outline btn-xs" href="data/implicates/PSID_synthetic_microdata_imp3.csv" download>3</a><a class="btn btn-outline btn-xs" href="data/implicates/PSID_synthetic_microdata_imp4.csv" download>4</a><a class="btn btn-outline btn-xs" href="data/implicates/PSID_synthetic_microdata_imp5.csv" download>5</a></div>
+        <div class="dl-row"><span class="dl-name">Factors</span><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/smoothed_factor_draws.csv">Posterior draws</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/smoothed_factors_bands.csv">5/50/95% bands</a></div>
+        <p class="dl-note">Main data are posterior point estimates; these files carry the posterior spread.</p>
+      </div>
+      <div class="dl-card">
+        <h3>Model objects</h3>
+        <div class="dl-row"><span class="dl-name">Legendre coefficients, in-sample</span><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/PSID_coefficients_normal.csv">PSID</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SCF_coefficients_normal.csv">SCF</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/CEX_coefficients_normal.csv">CEX</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/CPS2_coefficients_normal.csv">CPS 67&ndash;92</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/CPS_coefficients_normal.csv">CPS 93+</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SIPP1_coefficients_normal.csv">SIPP 1</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SIPP2_coefficients_normal.csv">SIPP 2</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SIPP3_coefficients_normal.csv">SIPP 3</a></div>
+        <div class="dl-row"><span class="dl-name">Legendre coefficients, average trend</span><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/PSID_coefficients_average.csv">PSID</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SCF_coefficients_average.csv">SCF</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/CEX_coefficients_average.csv">CEX</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/CPS2_coefficients_average.csv">CPS 67&ndash;92</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/CPS_coefficients_average.csv">CPS 93+</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SIPP1_coefficients_average.csv">SIPP 1</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SIPP2_coefficients_average.csv">SIPP 2</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SIPP3_coefficients_average.csv">SIPP 3</a></div>
+        <div class="dl-row"><span class="dl-name">Other</span><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/smoothed_factors.csv">Smoothed factors</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/aggregate_anchors.csv">Aggregate anchors</a></div>
+      </div>
+      <div class="dl-card">
+        <h3>Survey inputs</h3>
+        <div class="dl-row"><span class="dl-name">Processed microdata (.csv.gz)</span><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/SCF.csv.gz">SCF</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/PSID.csv.gz">PSID</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/CEX.csv.gz">CEX</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/CPS2.csv.gz">CPS 67&ndash;92</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/CPS.csv.gz">CPS 93&ndash;22</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/SIPP1.csv.gz">SIPP 83&ndash;95</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/SIPP2.csv.gz">SIPP 96&ndash;12</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/SIPP3.csv.gz">SIPP 13&ndash;22</a></div>
+        <p class="dl-note">Derived from the original surveys; the <a href="https://github.com/LuisCald/DD_replication/tree/main/data/processed" target="_blank" rel="noopener">original providers&rsquo; terms apply</a>.</p>
+      </div>
+      <div class="dl-card">
+        <h3>Code</h3>
+        <div class="dl-row"><span class="dl-name">DD_data scripts</span><a class="btn btn-outline btn-xs" href="https://github.com/LuisCald/DD_data/tree/main/python">Python</a><a class="btn btn-outline btn-xs" href="https://github.com/LuisCald/DD_data/tree/main/julia">Julia</a></div>
+        <div class="dl-row"><span class="dl-name">Repositories (zip)</span><a class="btn btn-outline btn-xs" href="https://codeload.github.com/LuisCald/DD_replication/zip/refs/heads/main">DD_replication</a><a class="btn btn-outline btn-xs" href="https://codeload.github.com/LuisCald/DD_data/zip/refs/heads/main">DD_data</a></div>
+        <p class="dl-note">DD_replication: estimation code and replication package. DD_data: scripts that rebuild moments, microdata and bands.</p>
+      </div>
+    </div>
+    <p class="dl-note">Data: <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>, free to use with attribution (please cite the paper). Code: MIT.</p>
+  </div>
+</section>
 
 <hr class="section-divider">
 
@@ -1153,102 +1249,6 @@ items = CSV.read(Downloads.download(url * <span class="code-string">"items/dd_it
         <p class="chart-note">Source: Bayer, Calderon &amp; Kuhn (2026). Share of households in each pair of deciles.</p>
       </div>
     </div>
-  </div>
-</section>
-
-<hr class="section-divider">
-
-<!-- DATA & REPLICATION -->
-<section id="data">
-  <div class="container">
-    <div class="section-label">Data &amp; Replication</div>
-    <h2>Data Sources and Downloads</h2>
-    <p class="prose">Five U.S. household surveys (C = consumption, I = income, W = wealth; *PSID wealth from 1984, consumption from 1999):</p>
-
-    <div class="timeline-wrapper">
-      <div class="timeline-row">
-        <div class="timeline-label">CPS</div>
-        <div class="timeline-bar-track">
-          <div class="timeline-bar" style="left:8.1%;right:3.2%;background:var(--accent)"></div>
-        </div>
-        <div class="timeline-bar-label">1967&ndash;2022 (I)</div>
-      </div>
-      <div class="timeline-row">
-        <div class="timeline-label">PSID</div>
-        <div class="timeline-bar-track">
-          <div class="timeline-bar" style="left:9.7%;right:4.8%;background:#2c5282"></div>
-        </div>
-        <div class="timeline-bar-label">1968&ndash;2021 (I,W,C)*</div>
-      </div>
-      <div class="timeline-row">
-        <div class="timeline-label">CEX</div>
-        <div class="timeline-bar-track">
-          <div class="timeline-bar" style="left:35.5%;right:4.8%;background:#3b6cb0"></div>
-        </div>
-        <div class="timeline-bar-label">1984&ndash;2021 (C,I)</div>
-      </div>
-      <div class="timeline-row">
-        <div class="timeline-label">SCF</div>
-        <div class="timeline-bar-track">
-          <div class="timeline-bar" style="left:0%;right:3.2%;background:#4a7ec0"></div>
-        </div>
-        <div class="timeline-bar-label">1962&ndash;2022 (I,W)</div>
-      </div>
-      <div class="timeline-row">
-        <div class="timeline-label">SIPP</div>
-        <div class="timeline-bar-track">
-          <div class="timeline-bar" style="left:33.9%;right:3.2%;background:#5a8ed0"></div>
-        </div>
-        <div class="timeline-bar-label">1983&ndash;2022 (I,W)</div>
-      </div>
-      <div class="timeline-scale">
-        <span>1962</span>
-        <span></span>
-        <span>2024</span>
-      </div>
-    </div>
-
-
-
-    <div class="dl-grid" id="downloads">
-      <div class="dl-card">
-        <h3>Main data</h3>
-        <div class="dl-row"><span class="dl-name">dd_series</span><a class="btn btn-outline btn-xs" href="data/dd_series.csv" download>CSV</a><a class="btn btn-outline btn-xs" href="data/dd_series.dta" download>Stata</a></div>
-        <div class="dl-row"><span class="dl-name">Synthetic microdata (dd_master)</span><a class="btn btn-outline btn-xs" href="data/dd_master.csv" download>CSV</a><a class="btn btn-outline btn-xs" href="data/dd_master.dta" download>Stata</a></div>
-        <div class="dl-row"><span class="dl-name">dd_tidy_long</span><a class="btn btn-outline btn-xs" href="data/dd_tidy_long.csv" download>CSV</a></div>
-        <p class="dl-note">dd_tidy_long: tidy long format; groups (bottom 50 / next 40 / top 10, quintiles, deciles) by survey.</p>
-      </div>
-      <div class="dl-card">
-        <h3>Balance sheets (DFA wealth groups)</h3>
-        <div class="dl-row"><span class="dl-name">All items</span><a class="btn btn-outline btn-xs" href="data/items/dd_items_SCF.csv" download>CSV</a><a class="btn btn-outline btn-xs" href="data/items/dd_items_SCF.dta" download>Stata</a></div>
-        <div class="dl-row"><span class="dl-name">By item (CSV)</span><a class="btn btn-outline btn-xs" href="data/items/real_estate_SCF.csv" download>Real estate</a><a class="btn btn-outline btn-xs" href="data/items/mortgages_SCF.csv" download>Mortgages</a><a class="btn btn-outline btn-xs" href="data/items/consumer_credit_SCF.csv" download>Consumer credit</a><a class="btn btn-outline btn-xs" href="data/items/pension_SCF.csv" download>Pensions</a><a class="btn btn-outline btn-xs" href="data/items/stocks_SCF.csv" download>Stocks*</a></div>
-        <p class="dl-note">*Stocks: next 40 and top 10 only. <a href="https://www.federalreserve.gov/releases/z1/dataviz/dfa/" target="_blank" rel="noopener">Compare: Fed DFA</a></p>
-      </div>
-      <div class="dl-card">
-        <h3>Uncertainty</h3>
-        <div class="dl-row"><span class="dl-name">Microdata implicates</span><a class="btn btn-outline btn-xs" href="data/implicates/PSID_synthetic_microdata_imp1.csv" download>1</a><a class="btn btn-outline btn-xs" href="data/implicates/PSID_synthetic_microdata_imp2.csv" download>2</a><a class="btn btn-outline btn-xs" href="data/implicates/PSID_synthetic_microdata_imp3.csv" download>3</a><a class="btn btn-outline btn-xs" href="data/implicates/PSID_synthetic_microdata_imp4.csv" download>4</a><a class="btn btn-outline btn-xs" href="data/implicates/PSID_synthetic_microdata_imp5.csv" download>5</a></div>
-        <div class="dl-row"><span class="dl-name">Factors</span><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/smoothed_factor_draws.csv">Posterior draws</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/smoothed_factors_bands.csv">5/50/95% bands</a></div>
-        <p class="dl-note">Main data are posterior point estimates; these files carry the posterior spread.</p>
-      </div>
-      <div class="dl-card">
-        <h3>Model objects</h3>
-        <div class="dl-row"><span class="dl-name">Legendre coefficients, in-sample</span><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/PSID_coefficients_normal.csv">PSID</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SCF_coefficients_normal.csv">SCF</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/CEX_coefficients_normal.csv">CEX</a></div>
-        <div class="dl-row"><span class="dl-name">Legendre coefficients, average trend</span><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/PSID_coefficients_average.csv">PSID</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SCF_coefficients_average.csv">SCF</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/CEX_coefficients_average.csv">CEX</a></div>
-        <div class="dl-row"><span class="dl-name">Other</span><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/smoothed_factors.csv">Smoothed factors</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/aggregate_anchors.csv">Aggregate anchors</a></div>
-      </div>
-      <div class="dl-card">
-        <h3>Survey inputs</h3>
-        <div class="dl-row"><span class="dl-name">Processed microdata (.csv.gz)</span><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/SCF.csv.gz">SCF</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/PSID.csv.gz">PSID</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/CEX.csv.gz">CEX</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/CPS2.csv.gz">CPS 67&ndash;92</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/CPS.csv.gz">CPS 93&ndash;22</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/SIPP1.csv.gz">SIPP 83&ndash;95</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/SIPP2.csv.gz">SIPP 96&ndash;12</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/SIPP3.csv.gz">SIPP 13&ndash;22</a></div>
-        <p class="dl-note">Derived from the original surveys; the <a href="https://github.com/LuisCald/DD_replication/tree/main/data/processed" target="_blank" rel="noopener">original providers&rsquo; terms apply</a>.</p>
-      </div>
-      <div class="dl-card">
-        <h3>Code</h3>
-        <div class="dl-row"><span class="dl-name">DD_data scripts</span><a class="btn btn-outline btn-xs" href="https://github.com/LuisCald/DD_data/tree/main/python">Python</a><a class="btn btn-outline btn-xs" href="https://github.com/LuisCald/DD_data/tree/main/julia">Julia</a></div>
-        <div class="dl-row"><span class="dl-name">Repositories (zip)</span><a class="btn btn-outline btn-xs" href="https://codeload.github.com/LuisCald/DD_replication/zip/refs/heads/main">DD_replication</a><a class="btn btn-outline btn-xs" href="https://codeload.github.com/LuisCald/DD_data/zip/refs/heads/main">DD_data</a></div>
-        <p class="dl-note">DD_replication: estimation code and replication package. DD_data: scripts that rebuild moments, microdata and bands.</p>
-      </div>
-    </div>
-    <p class="dl-note">Data: <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>, free to use with attribution (please cite the paper). Code: MIT.</p>
   </div>
 </section>
 
