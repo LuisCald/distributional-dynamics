@@ -1007,7 +1007,7 @@ footer .footer-bottom .brand {
 <header class="hero" id="overview">
   <div class="container-wide">
     <h1>High-Frequency Synthetic Distributions of Consumption, Income, and Wealth</h1>
-    <p class="tagline">Who gained and who lost, every quarter since 1962: one consistent series for U.S. household consumption, income and wealth, combining five surveys.</p>
+    <p class="tagline">Quarterly estimates from 1962 to 2024 combining functional data analysis and Bayesian state-space models</p>
     <p class="authors">
       Christian Bayer <span class="affil">(Bonn, CEPR, IZA, CESifo)</span>,
       Luis Calderon <span class="affil">(Bonn)</span>,
@@ -1246,7 +1246,7 @@ items = CSV.read(Downloads.download(url * <span class="code-string">"items/dd_it
           </div>
           <div class="slider-year-labels" id="bivarYearLabels"></div>
         </div>
-        <p class="chart-note">Source: Bayer, Calderon &amp; Kuhn (2026). Share of households in each pair of deciles.</p>
+        <p class="chart-note">Source: Bayer, Calderon &amp; Kuhn (2026). Share of households in each pair of deciles. I &times; W: SCF view, 1962&ndash;2024; C &times; I and C &times; W: PSID view, 1999&ndash;2024.</p>
       </div>
     </div>
   </div>
@@ -1825,6 +1825,11 @@ function getBivarPair() {
   return document.querySelector('input[name="bivarPair"]:checked').value;
 }
 
+// each pair has its own quarters: C x I and C x W (PSID) from 1999-Q2, I x W (SCF) from 1962-Q3
+function bivarT() {
+  return BIVAR_DATA['t_' + getBivarPair()];
+}
+
 function getBivarZMax(pair) {
   let max = 0;
   BIVAR_DATA[pair].forEach(function(grid) {
@@ -1922,7 +1927,7 @@ function updateBivarPlot() {
   document.getElementById('bivarAxisLabels').innerHTML = 
     '<span>X-axis: ' + labels.x + '</span><span>Y-axis: ' + labels.y + '</span><span>Z-axis: Pop. Share</span>';
 
-  document.getElementById('bivarQuarterLabel').textContent = BIVAR_DATA.t[bivarCurrentIdx];
+  document.getElementById('bivarQuarterLabel').textContent = bivarT()[bivarCurrentIdx];
 }
 
 function bivarAnimate(timestamp) {
@@ -1931,7 +1936,7 @@ function bivarAnimate(timestamp) {
   const interval = 1000 / fps;
   if (timestamp - bivarLastFrameTime >= interval) {
     bivarLastFrameTime = timestamp;
-    bivarCurrentIdx = (bivarCurrentIdx + 1) % BIVAR_DATA.t.length;
+    bivarCurrentIdx = (bivarCurrentIdx + 1) % bivarT().length;
     updateBivarPlot();
     updateBivarScrubberThumb();
   }
@@ -1954,28 +1959,30 @@ function toggleBivarPlay() {
 }
 
 function updateBivarScrubberThumb() {
-  const total = BIVAR_DATA.t.length;
+  const total = bivarT().length;
   const pct = bivarCurrentIdx / (total - 1) * 100;
   const thumb = document.getElementById('bivarScrubberThumb');
   thumb.style.left = pct + '%';
   thumb.setAttribute('aria-valuenow', bivarCurrentIdx);
-  thumb.setAttribute('aria-valuetext', BIVAR_DATA.t[bivarCurrentIdx]);
+  thumb.setAttribute('aria-valuetext', bivarT()[bivarCurrentIdx]);
 }
 
-function initBivarScrubber() {
-  const total = BIVAR_DATA.t.length;
-  const track = document.getElementById('bivarScrubberTrack');
-  const thumb = document.getElementById('bivarScrubberThumb');
-  const yearLabelsContainer = document.getElementById('bivarYearLabels');
+const BIVAR_RECESSIONS = [
+  ['1969-Q4', '1970-Q4'], ['1973-Q4', '1975-Q1'], ['1980-Q1', '1980-Q3'], ['1981-Q3', '1982-Q4'],
+  ['1990-Q3', '1991-Q1'], ['2001-Q1', '2001-Q4'], ['2007-Q4', '2009-Q2'], ['2020-Q1', '2020-Q2']
+];
 
-  const bivarRecessions = [
-    ['2001-Q1', '2001-Q4'],
-    ['2007-Q4', '2009-Q2'],
-    ['2020-Q1', '2020-Q2']
-  ];
-  bivarRecessions.forEach(function(rec) {
-    const si = BIVAR_DATA.t.indexOf(rec[0]);
-    const ei = BIVAR_DATA.t.indexOf(rec[1]);
+// recession bands and year labels for the selected pair's quarters
+function drawBivarScrubberMarks() {
+  const t = bivarT();
+  const total = t.length;
+  const track = document.getElementById('bivarScrubberTrack');
+  const yearLabelsContainer = document.getElementById('bivarYearLabels');
+  track.querySelectorAll('.slider-recession').forEach(function(el) { el.remove(); });
+  yearLabelsContainer.innerHTML = '';
+  BIVAR_RECESSIONS.forEach(function(rec) {
+    const si = t.indexOf(rec[0]);
+    const ei = t.indexOf(rec[1]);
     if (si >= 0 && ei >= 0) {
       const span = document.createElement('div');
       span.className = 'slider-recession';
@@ -1984,10 +1991,9 @@ function initBivarScrubber() {
       track.appendChild(span);
     }
   });
-
-  [2000, 2005, 2010, 2015, 2020].forEach(function(year) {
-    const q = year + '-Q1';
-    const idx = BIVAR_DATA.t.indexOf(q);
+  const step = total > 150 ? 10 : 5;
+  for (let year = 1960; year <= 2025; year += step) {
+    const idx = t.indexOf(year + '-Q1');
     if (idx >= 0) {
       const lbl = document.createElement('span');
       lbl.className = 'slider-year-label';
@@ -1995,10 +2001,19 @@ function initBivarScrubber() {
       lbl.style.left = (idx / (total - 1) * 100) + '%';
       yearLabelsContainer.appendChild(lbl);
     }
-  });
+  }
+  document.getElementById('bivarScrubberThumb').setAttribute('aria-valuemax', total - 1);
+}
+
+function initBivarScrubber() {
+  const track = document.getElementById('bivarScrubberTrack');
+  const thumb = document.getElementById('bivarScrubberThumb');
+  const yearLabelsContainer = document.getElementById('bivarYearLabels');
+
+  drawBivarScrubberMarks();
 
   function pctToIdx(pct) {
-    return Math.round(Math.max(0, Math.min(100, pct)) / 100 * (total - 1));
+    return Math.round(Math.max(0, Math.min(100, pct)) / 100 * (bivarT().length - 1));
   }
 
   function getPointerPct(e) {
@@ -2049,11 +2064,11 @@ function initBivarScrubber() {
   });
 
   thumb.setAttribute('aria-valuemin', 0);
-  thumb.setAttribute('aria-valuemax', total - 1);
   thumb.addEventListener('keydown', function(e) {
     const step = sliderKeyStep(e.key);
     if (step === null) return;
     e.preventDefault();
+    const total = bivarT().length;
     const v = step === -Infinity ? 0 : step === Infinity ? total - 1 : bivarCurrentIdx + step;
     bivarCurrentIdx = Math.max(0, Math.min(total - 1, v));
     updateBivarScrubberThumb();
@@ -2061,6 +2076,17 @@ function initBivarScrubber() {
   });
 
   updateBivarScrubberThumb();
+}
+
+// switching pairs keeps the displayed quarter when the new pair has it, else the nearest end
+function onBivarPairChange() {
+  const q = document.getElementById('bivarQuarterLabel').textContent;
+  const t = bivarT();
+  const idx = t.indexOf(q);
+  bivarCurrentIdx = idx >= 0 ? idx : (q < t[0] ? 0 : t.length - 1);
+  drawBivarScrubberMarks();
+  updateBivarScrubberThumb();
+  updateBivarPlot();
 }
 
 function resetBivarCamera() {
@@ -2075,7 +2101,7 @@ function initBivarView() {
   initBivarScrubber();
 
   document.querySelectorAll('input[name="bivarPair"]').forEach(function(el) {
-    el.addEventListener('change', updateBivarPlot);
+    el.addEventListener('change', onBivarPairChange);
   });
 
   document.getElementById('bivarPlayBtn').addEventListener('click', toggleBivarPlay);
