@@ -101,7 +101,7 @@
   --bg-warm: #eee9e0;
   --ink: #1a1a2e;
   --ink-light: #4a4a5e;
-  --ink-faint: #8a8a9e;
+  --ink-faint: #626276;
   --accent: #1e3a5f;
   --accent-bright: #2c5282;
   --accent-glow: #3b6cb0;
@@ -274,7 +274,6 @@ nav .links a:hover { color: var(--accent); background: rgba(30,58,95,0.06); }
 .hero-code-caption { font-size: 13.5px; color: var(--ink-light); margin: 0 0 4px; }
 .hero-code-caption code { font-family: var(--font-mono); font-size: 12.5px; }
 @media (max-width: 720px) {
-  .hero-load-title { font-size: 28px; }
   .hero-code { padding: 12px 14px 8px; }
   .hero-code pre { font-size: 12px; }
 }
@@ -959,29 +958,30 @@ footer .footer-bottom .brand {
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
-  nav .links { display: none; }
+  nav { padding: 0 16px; }
+  nav .nav-inner { gap: 12px; }
+  nav .brand { font-size: 14px; white-space: nowrap; }
+  nav .links { gap: 0; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  nav .links::-webkit-scrollbar { display: none; }
+  nav .links a { font-size: 12.5px; padding: 6px 7px; white-space: nowrap; }
+  .hero { padding: 56px 0 48px; }
   .hero .pkg-name { font-size: 32px; }
-  .hero h1 { font-size: 20px; }
+  .hero h1 { font-size: 22px; }
+  .hero-load-title { font-size: 19px; }
+  .container, .container-wide { padding: 0 16px; }
   .method-steps { grid-template-columns: 1fr; }
+  .explorer-wrapper { padding: 16px 12px; }
+  .explorer-tab { padding: 10px 14px; }
   .explorer-controls { flex-direction: column; gap: 16px; }
+  .log-toggle { margin-left: 0; }
   .bivar-controls { flex-direction: column; align-items: flex-start; gap: 14px; }
   .bivar-quarter-label { margin-left: 0; }
-  .bivar-axis-labels {
-  display: flex;
-  gap: 20px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--ink-faint);
-  margin-bottom: 8px;
-}
-.bivar-axis-labels span {
-  padding: 3px 10px;
-  background: var(--code-bg);
-  border-radius: 4px;
-  border: 1px solid var(--border);
-}
-.bivar-chart-area { height: 380px; }
+  .bivar-axis-labels { flex-wrap: wrap; gap: 8px; }
+  .bivar-chart-area { height: 380px; }
+  .chart-container { height: 320px; }
   .timeline-label { width: 50px; font-size: 11px; }
+  .timeline-bar-label { width: 84px; }
+  .timeline-scale { margin-left: 66px; }
 }
 </style>
 </head>
@@ -1481,14 +1481,14 @@ function initExplorerChart() {
             autoSkip: false,
             maxRotation: 0,
             font: { family: "'DM Mono', monospace", size: 11 },
-            color: '#8a8a9e'
+            color: '#626276'
           },
           grid: { display: false }
         },
         y: {
           ticks: {
             font: { family: "'DM Mono', monospace", size: 11 },
-            color: '#8a8a9e'
+            color: '#626276'
           },
           grid: { color: 'rgba(212,207,198,0.5)' }
         }
