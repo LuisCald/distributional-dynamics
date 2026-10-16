@@ -271,6 +271,8 @@ nav .links a:hover { color: var(--accent); background: rgba(30,58,95,0.06); }
 }
 .hero-code { max-width: 860px; margin: 0 auto 40px; text-align: left; background: var(--card-bg, #fff); border: 1px solid rgba(0,0,0,0.08); border-radius: 12px; padding: 14px 24px 10px; box-shadow: 0 2px 14px rgba(0,0,0,0.05); }
 .hero-code pre { font-size: 13.5px; line-height: 1.6; overflow-x: auto; margin: 0 0 10px; }
+.hero-code-caption { font-size: 13.5px; color: var(--ink-light); margin: 0 0 4px; }
+.hero-code-caption code { font-family: var(--font-mono); font-size: 12.5px; }
 @media (max-width: 720px) {
   .hero-load-title { font-size: 28px; }
   .hero-code { padding: 12px 14px 8px; }
@@ -967,11 +969,11 @@ footer .footer-bottom .brand {
 <!-- NAV -->
 <nav>
   <div class="nav-inner">
-    <a href="#overview" class="brand">distributional-dynamics</a>
+    <a href="#overview" class="brand">Distributional Dynamics</a>
     <div class="links">
       <a href="#explorer">Explore</a>
-      <a href="#methodology">Methodology</a>
       <a href="#data">Data</a>
+      <a href="#methodology">Methodology</a>
       <a href="#citation">Cite</a>
     </div>
   </div>
@@ -981,30 +983,22 @@ footer .footer-bottom .brand {
 <header class="hero" id="overview">
   <div class="container-wide">
     <h1>High-Frequency Synthetic Distributions of Consumption, Income, and Wealth</h1>
-    <p class="tagline">United States, quarterly, 1962&ndash;2024</p>
+    <p class="tagline">Who gained and who lost, every quarter since 1962: one consistent series for U.S. household consumption, income and wealth, combining five surveys.</p>
     <p class="authors">
       Christian Bayer <span class="affil">(Bonn, CEPR, IZA, CESifo)</span>,
       Luis Calderon <span class="affil">(Bonn)</span>,
       Moritz Kuhn <span class="affil">(Mannheim, CEPR, IZA, CESifo)</span>
     </p>
 
-    <h2 class="hero-load-title">Load the data in one line</h2>
+    <h2 class="hero-load-title">Load the data</h2>
     <div class="hero-code">
 <div class="code-tabs">
-      <button class="code-tab active" data-lang="julia" onclick="switchCodeTab('julia')">Julia</button>
-      <button class="code-tab" data-lang="python" onclick="switchCodeTab('python')">Python</button>
+      <button class="code-tab active" data-lang="python" onclick="switchCodeTab('python')">Python</button>
       <button class="code-tab" data-lang="stata" onclick="switchCodeTab('stata')">Stata</button>
+      <button class="code-tab" data-lang="julia" onclick="switchCodeTab('julia')">Julia</button>
     </div>
 
-    <div class="code-panel active" id="code-julia">
-<pre class=""><span class="code-keyword">using</span> CSV, DataFrames, Downloads
-url   = <span class="code-string">"https://www.distributionaldynamics.com/data/"</span>
-
-df    = CSV.read(Downloads.download(url * <span class="code-string">"dd_series.csv"</span>), DataFrame)
-items = CSV.read(Downloads.download(url * <span class="code-string">"items/dd_items_SCF.csv"</span>), DataFrame)</pre>
-    </div>
-
-    <div class="code-panel" id="code-python">
+    <div class="code-panel active" id="code-python">
 <pre class=""><span class="code-keyword">import</span> pandas <span class="code-keyword">as</span> pd
 
 df    = pd.read_csv(<span class="code-string">"https://www.distributionaldynamics.com/data/dd_series.csv"</span>)
@@ -1016,15 +1010,21 @@ items = pd.read_csv(<span class="code-string">"https://www.distributionaldynamic
 <span class="code-comment">* balance-sheet items (SCF), a separate file:</span>
 <span class="code-keyword">use</span> <span class="code-string">"https://www.distributionaldynamics.com/data/items/dd_items_SCF.dta"</span>, clear</pre>
     </div>
+
+    <div class="code-panel" id="code-julia">
+<pre class=""><span class="code-keyword">using</span> CSV, DataFrames, Downloads
+url   = <span class="code-string">"https://www.distributionaldynamics.com/data/"</span>
+
+df    = CSV.read(Downloads.download(url * <span class="code-string">"dd_series.csv"</span>), DataFrame)
+items = CSV.read(Downloads.download(url * <span class="code-string">"items/dd_items_SCF.csv"</span>), DataFrame)</pre>
+    </div>
+    <p class="hero-code-caption"><code>dd_series</code>: one row per quarter, 1962Q3&ndash;2024Q1, with decile shares, totals and means per household of consumption, income and wealth.</p>
     </div>
 
     <div class="actions">
-      <a href="pdfs/BCK_DistributionalDynamics.pdf" target="_blank" class="btn btn-primary">Read the Paper</a>
-      <a href="https://github.com/LuisCald/DD_replication" target="_blank" class="btn btn-outline">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-        Replication Code
-      </a>
-      <a href="https://github.com/LuisCald/DD_data" target="_blank" class="btn btn-outline">Download Synthetic Data</a>
+      <a href="#downloads" class="btn btn-primary">Get the data</a>
+      <a href="pdfs/BCK_DistributionalDynamics.pdf" target="_blank" rel="noopener" class="btn btn-outline">Read the paper</a>
+      <a href="https://github.com/LuisCald/DD_replication" target="_blank" rel="noopener" class="btn btn-outline">Code</a>
     </div>
   </div>
 </header>
@@ -1123,61 +1123,6 @@ items = pd.read_csv(<span class="code-string">"https://www.distributionaldynamic
 
 <hr class="section-divider">
 
-<!-- METHODOLOGY -->
-<section id="methodology">
-  <div class="container">
-    <div class="section-label">Methodology</div>
-    <h2>From Microdata to Synthetic Distributions</h2>
-    <p class="prose">We develop a new method for deriving high-frequency synthetic distributions of consumption, income, and wealth. The core of the method is to treat the distributional data as a time series of functions whose underlying factor structure follows a state-space model, estimated using Bayesian techniques. The method incorporates different sources of microdata regardless of their frequency and variable coverage.</p>
-
-    <div class="method-steps">
-      <div class="method-step">
-        <div class="step-num">1</div>
-        <h4>Microdata</h4>
-        <p>PSID, SCF, CEX, SIPP, and CPS &mdash; each with different frequency and variable coverage</p>
-      </div>
-      <div class="method-step">
-        <div class="step-num">2</div>
-        <h4>Functional Representation</h4>
-        <p>Quantile functions for marginals plus copula for joint dependence</p>
-      </div>
-      <div class="method-step">
-        <div class="step-num">3</div>
-        <h4>Dimensionality Reduction</h4>
-        <p>PCA on Legendre polynomial coefficients captures variation in a few factors</p>
-      </div>
-      <div class="method-step">
-        <div class="step-num">4</div>
-        <h4>State-Space Model</h4>
-        <p>Factor dynamics follow a VAR in companion form with aggregate covariates</p>
-      </div>
-      <div class="method-step">
-        <div class="step-num">5</div>
-        <h4>Bayesian Estimation</h4>
-        <p>MCMC with Kalman smoother produces posterior draws of the latent factors</p>
-      </div>
-      <div class="method-step">
-        <div class="step-num">6</div>
-        <h4>Synthetic Distributions</h4>
-        <p>High-frequency quarterly output: full distributions for all 247 quarters</p>
-      </div>
-    </div>
-
-    <div class="math-block">
-      <p style="font-size:14px;color:var(--ink-faint);margin-bottom:16px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.08em">State equation</p>
-      $$\begin{bmatrix} F_t \\ Y_t \end{bmatrix} = \begin{bmatrix} \Phi_{FF} & \Phi_{FY} \\ \Phi_{YF} & \Phi_{YY} \end{bmatrix} \begin{bmatrix} F_{t-1} \\ Y_{t-1} \end{bmatrix} + \varepsilon_t, \qquad \varepsilon_t \sim \mathcal{N}(0, \Omega)$$
-    </div>
-
-    <div class="math-block">
-      <p style="font-size:14px;color:var(--ink-faint);margin-bottom:16px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.08em">Observation equation</p>
-      $$\tilde{\theta}^j_t = H^j_t \left( \alpha^j \, \hat{\Gamma}^{\text{MF}} F_t + \nu^j_{F,t} \right)$$
-    </div>
-
-    <p class="prose">Here \(F_t\) are the latent distributional factors, \(Y_t\) are aggregate covariates, \(\hat{\Gamma}^{\text{MF}}\) is the factor loading matrix from PCA, and \(H^j_t\) is a selector matrix for each dataset \(j\). The model handles mixed frequencies through the time-aggregation parameter \(\alpha^j\).</p>
-  </div>
-</section>
-<hr class="section-divider">
-
 <!-- DATA & REPLICATION -->
 <section id="data">
   <div class="container">
@@ -1246,6 +1191,62 @@ items = pd.read_csv(<span class="code-string">"https://www.distributionaldynamic
 
 <hr class="section-divider">
 
+<!-- METHODOLOGY -->
+<section id="methodology">
+  <div class="container">
+    <div class="section-label">Methodology</div>
+    <h2>From Microdata to Synthetic Distributions</h2>
+    <p class="prose">We develop a new method for deriving high-frequency synthetic distributions of consumption, income, and wealth. The core of the method is to treat the distributional data as a time series of functions whose underlying factor structure follows a state-space model, estimated using Bayesian techniques. The method incorporates different sources of microdata regardless of their frequency and variable coverage.</p>
+
+    <div class="method-steps">
+      <div class="method-step">
+        <div class="step-num">1</div>
+        <h4>Microdata</h4>
+        <p>PSID, SCF, CEX, SIPP, and CPS &mdash; each with different frequency and variable coverage</p>
+      </div>
+      <div class="method-step">
+        <div class="step-num">2</div>
+        <h4>Functional Representation</h4>
+        <p>Quantile functions for marginals plus copula for joint dependence</p>
+      </div>
+      <div class="method-step">
+        <div class="step-num">3</div>
+        <h4>Dimensionality Reduction</h4>
+        <p>PCA on Legendre polynomial coefficients captures variation in a few factors</p>
+      </div>
+      <div class="method-step">
+        <div class="step-num">4</div>
+        <h4>State-Space Model</h4>
+        <p>Factor dynamics follow a VAR in companion form with aggregate covariates</p>
+      </div>
+      <div class="method-step">
+        <div class="step-num">5</div>
+        <h4>Bayesian Estimation</h4>
+        <p>MCMC with Kalman smoother produces posterior draws of the latent factors</p>
+      </div>
+      <div class="method-step">
+        <div class="step-num">6</div>
+        <h4>Synthetic Distributions</h4>
+        <p>High-frequency quarterly output: full distributions for all 247 quarters</p>
+      </div>
+    </div>
+
+    <div class="math-block">
+      <p style="font-size:14px;color:var(--ink-faint);margin-bottom:16px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.08em">State equation</p>
+      $$\begin{bmatrix} F_t \\ Y_t \end{bmatrix} = \begin{bmatrix} \Phi_{FF} & \Phi_{FY} \\ \Phi_{YF} & \Phi_{YY} \end{bmatrix} \begin{bmatrix} F_{t-1} \\ Y_{t-1} \end{bmatrix} + \varepsilon_t, \qquad \varepsilon_t \sim \mathcal{N}(0, \Omega)$$
+    </div>
+
+    <div class="math-block">
+      <p style="font-size:14px;color:var(--ink-faint);margin-bottom:16px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.08em">Observation equation</p>
+      $$\tilde{\theta}^j_t = H^j_t \left( \alpha^j \, \hat{\Gamma}^{\text{MF}} F_t + \nu^j_{F,t} \right)$$
+    </div>
+
+    <p class="prose">Here \(F_t\) are the latent distributional factors, \(Y_t\) are aggregate covariates, \(\hat{\Gamma}^{\text{MF}}\) is the factor loading matrix from PCA, and \(H^j_t\) is a selector matrix for each dataset \(j\). The model handles mixed frequencies through the time-aggregation parameter \(\alpha^j\).</p>
+  </div>
+</section>
+
+<hr class="section-divider">
+
 <!-- CITATION -->
 <section id="citation">
   <div class="container">
@@ -1276,11 +1277,11 @@ items = pd.read_csv(<span class="code-string">"https://www.distributionaldynamic
 <footer>
   <div class="footer-inner">
     <div class="footer-bottom">
-      <span class="brand">distributional-dynamics</span>
+      <span class="brand">Distributional Dynamics</span>
       <span>
         <a href="mailto:luis.calderon@uni-bonn.de">luis.calderon@uni-bonn.de</a>
         &ensp;&middot;&ensp;
-        <a href="https://github.com/LuisCald/DD_replication" target="_blank">GitHub</a>
+        <a href="https://github.com/LuisCald/DD_replication" target="_blank" rel="noopener">Replication code on GitHub</a>
       </span>
     </div>
   </div>
