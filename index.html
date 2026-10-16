@@ -436,8 +436,8 @@ p:last-child { margin-bottom: 0; }
   flex-wrap: wrap;
 }
 
-.control-group label {
-  display: block;
+fieldset.control-group { border: 0; min-width: 0; }
+.control-group legend {
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 500;
@@ -445,6 +445,15 @@ p:last-child { margin-bottom: 0; }
   letter-spacing: 0.1em;
   color: var(--ink-faint);
   margin-bottom: 10px;
+  padding: 0;
+}
+.control-group label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-faint);
 }
 
 .checkbox-group {
@@ -470,6 +479,8 @@ p:last-child { margin-bottom: 0; }
 }
 
 .decile-toggle input { accent-color: var(--accent); }
+.chart-export { display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px; }
+.chart-export .copy-btn { position: static; }
 
 .chart-container {
   position: relative;
@@ -1045,43 +1056,50 @@ items = CSV.read(Downloads.download(url * <span class="code-string">"items/dd_it
 <section id="explorer">
   <div class="container-wide">
     <div class="section-label">Explore the Data</div>
-    <h2>Distribution Dynamics Over Time</h2>
-    <p class="prose" style="max-width:var(--max-w)">Explore the synthetic distributional data across consumption, income, and wealth. Select a variable, metric, and toggle individual deciles. Gray bands indicate NBER recession periods.</p>
+    <h2>Inequality, quarter by quarter</h2>
+    <p class="prose" style="max-width:var(--max-w)">Explore the synthetic distributional data across consumption, income, and wealth. Select a variable and metric, and show deciles or the bottom 50 / next 40 / top 10. Gray bands indicate NBER recession periods.</p>
 
     <div class="explorer-wrapper">
       <div class="explorer-tabs">
-        <button class="explorer-tab active" onclick="switchExplorerTab('univariate')">Univariate</button>
-        <button class="explorer-tab" onclick="switchExplorerTab('bivariate')">Bivariate</button>
+        <button class="explorer-tab active" onclick="switchExplorerTab('univariate')">One variable</button>
+        <button class="explorer-tab" onclick="switchExplorerTab('bivariate')">Joint distribution</button>
       </div>
 
       <div id="panel-univariate" class="explorer-panel active">
         <div class="explorer-controls">
-          <div class="control-group">
-            <label>Variable</label>
-            <div class="checkbox-group" id="varGroup">
-              <label class="decile-toggle"><input type="checkbox" name="var" value="income" checked> Income</label>
-              <label class="decile-toggle"><input type="checkbox" name="var" value="consum"> Consumption</label>
-              <label class="decile-toggle"><input type="checkbox" name="var" value="wealth"> Wealth</label>
+          <fieldset class="control-group">
+            <legend>Variable</legend>
+            <div class="checkbox-group">
+              <label class="decile-toggle"><input type="radio" name="var" value="income" checked> Income</label>
+              <label class="decile-toggle"><input type="radio" name="var" value="consum"> Consumption</label>
+              <label class="decile-toggle"><input type="radio" name="var" value="wealth"> Wealth</label>
             </div>
-          </div>
-          <div class="control-group">
-            <label>Metric</label>
-            <div class="checkbox-group" id="metricGroup">
-              <label class="decile-toggle"><input type="checkbox" name="metric" value="shares" checked> Shares</label>
-              <label class="decile-toggle"><input type="checkbox" name="metric" value="quantiles"> Means</label>
-              <label class="decile-toggle"><input type="checkbox" name="metric" value="levels"> Totals</label>
+          </fieldset>
+          <fieldset class="control-group">
+            <legend>Metric</legend>
+            <div class="checkbox-group">
+              <label class="decile-toggle"><input type="radio" name="metric" value="shares" checked> Shares</label>
+              <label class="decile-toggle"><input type="radio" name="metric" value="quantiles"> Means</label>
+              <label class="decile-toggle"><input type="radio" name="metric" value="levels"> Totals</label>
             </div>
-          </div>
-          <div class="control-group">
-            <label>Deciles</label>
+          </fieldset>
+          <fieldset class="control-group">
+            <legend>Groups</legend>
+            <div class="checkbox-group">
+              <label class="decile-toggle"><input type="radio" name="grouping" value="deciles" checked> Deciles</label>
+              <label class="decile-toggle"><input type="radio" name="grouping" value="groups"> Bottom 50 / next 40 / top 10</label>
+            </div>
+          </fieldset>
+          <fieldset class="control-group">
+            <legend>Show</legend>
             <div class="decile-toggles" id="decileToggles"></div>
-          </div>
+          </fieldset>
           <label class="log-toggle">
-            <input type="checkbox" id="asinhScale"> IHS transform
+            <input type="checkbox" id="asinhScale"> Compress scale (IHS)
           </label>
         </div>
         <div class="chart-container">
-          <canvas id="explorerChart"></canvas>
+          <canvas id="explorerChart" role="img" aria-label="Line chart of the selected distribution series over time"></canvas>
         </div>
         <div class="range-slider" id="rangeSlider">
           <div class="range-slider-label">Year range</div>
@@ -1091,21 +1109,25 @@ items = CSV.read(Downloads.download(url * <span class="code-string">"items/dd_it
             <div class="slider-handle" id="handleRight"></div>
           </div>
           <div class="slider-year-labels" id="sliderYearLabels"></div>
-          <div class="range-slider-hint">Drag handles to zoom &middot; double-click to reset</div>
+          <div class="range-slider-hint">Drag handles or use arrow keys to zoom &middot; double-click to reset</div>
         </div>
-        <p class="chart-note">Source: Bayer, Calderon &amp; Kuhn (2026), PSID view. Decile groups D1 (bottom 10%) to D10 (top 10%); totals in trillions, means per household in 2019Q4 USD.</p>
+        <div class="chart-export">
+          <button type="button" class="copy-btn" id="dlPng">Download PNG</button>
+          <button type="button" class="copy-btn" id="dlCsv">Download CSV</button>
+        </div>
+        <p class="chart-note">Source: Bayer, Calderon &amp; Kuhn (2026), PSID view. Decile groups D1 (bottom 10%) to D10 (top 10%); totals in trillions, means per household, both in 2019Q4 USD (CPI-U). Wealth starts in 1984 (PSID), consumption in 1999.</p>
       </div>
 
       <div id="panel-bivariate" class="explorer-panel">
         <div class="bivar-controls">
-          <div class="control-group">
-            <label>Joint Distribution</label>
+          <fieldset class="control-group">
+            <legend>Joint distribution</legend>
             <div class="bivar-pair-group">
               <label class="bivar-pair-label"><input type="radio" name="bivarPair" value="ci" checked> C &times; I</label>
               <label class="bivar-pair-label"><input type="radio" name="bivarPair" value="cw"> C &times; W</label>
               <label class="bivar-pair-label"><input type="radio" name="bivarPair" value="iw"> I &times; W</label>
             </div>
-          </div>
+          </fieldset>
           <div class="bivar-playback">
             <button class="bivar-play-btn" id="bivarPlayBtn" title="Play/Pause">&#9654;</button>
             <button class="bivar-play-btn" id="bivarResetBtn" title="Reset view">&#8634;</button>
@@ -1346,10 +1368,17 @@ const DECILE_COLORS = [
 const DECILE_LABELS = ['D1','D2','D3','D4','D5','D6','D7','D8','D9','D10'];
 
 const METRIC_LABELS = {
-  shares: 'Share of Total',
-  quantiles: 'Mean per household (USD)',
-  levels: 'Group total (trillions USD)'
+  shares: 'Share of total',
+  quantiles: 'Mean per household (2019Q4 USD)',
+  levels: 'Group total (trillion 2019Q4 USD)'
 };
+
+// Bottom 50 / next 40 / top 10 from decile indices; shares and totals add up, means average (equal-sized deciles)
+const GROUPS = [
+  { label: 'Bottom 50', idx: [0, 1, 2, 3, 4], color: '#65a4e5' },
+  { label: 'Next 40', idx: [5, 6, 7, 8], color: '#2563b0' },
+  { label: 'Top 10', idx: [9], color: '#08183a' }
+];
 
 const VAR_LABELS = {
   income: 'Income',
@@ -1382,43 +1411,18 @@ document.addEventListener('DOMContentLoaded', function() {
     throwOnError: false
   });
 
-  // Build decile toggles
-  const toggleContainer = document.getElementById('decileToggles');
-  DECILES.forEach((d, i) => {
-    const lbl = document.createElement('label');
-    lbl.className = 'decile-toggle';
-    lbl.innerHTML = '<input type="checkbox" checked data-decile="' + d + '"> ' + DECILE_LABELS[i];
-    toggleContainer.appendChild(lbl);
-  });
-
+  buildSeriesToggles();
   initExplorerChart();
   initRangeSlider();
 
-  // Variable checkboxes: enforce single-select
-  document.querySelectorAll('input[name="var"]').forEach(el => {
-    el.addEventListener('change', function() {
-      if (this.checked) {
-        document.querySelectorAll('input[name="var"]').forEach(cb => { if (cb !== this) cb.checked = false; });
-      } else {
-        this.checked = true; // prevent unchecking all
-      }
-      updateExplorerChart();
-    });
-  });
-  // Metric checkboxes: enforce single-select
-  document.querySelectorAll('input[name="metric"]').forEach(el => {
-    el.addEventListener('change', function() {
-      if (this.checked) {
-        document.querySelectorAll('input[name="metric"]').forEach(cb => { if (cb !== this) cb.checked = false; });
-      } else {
-        this.checked = true;
-      }
-      updateExplorerChart();
-    });
-  });
-  document.querySelectorAll('#decileToggles input').forEach(el => {
+  document.querySelectorAll('input[name="var"], input[name="metric"]').forEach(el => {
     el.addEventListener('change', updateExplorerChart);
   });
+  document.querySelectorAll('input[name="grouping"]').forEach(el => {
+    el.addEventListener('change', () => { buildSeriesToggles(); updateExplorerChart(); });
+  });
+  document.getElementById('dlPng').addEventListener('click', downloadChartPng);
+  document.getElementById('dlCsv').addEventListener('click', downloadChartCsv);
   document.getElementById('asinhScale').addEventListener('change', updateExplorerChart);
 
 });
@@ -1500,34 +1504,63 @@ function initExplorerChart() {
 
 // Range slider state
 let rangeStartIdx = 0;
-let rangeEndIdx = 246; // DATA.t.length - 1
+let rangeEndIdx = DATA.t.length - 1;
 
-function updateExplorerChart() {
+function getGrouping() { return document.querySelector('input[name="grouping"]:checked').value; }
+
+function buildSeriesToggles() {
+  const box = document.getElementById('decileToggles');
+  const labels = getGrouping() === 'groups' ? GROUPS.map(g => g.label) : DECILE_LABELS;
+  box.innerHTML = labels.map((l, i) =>
+    '<label class="decile-toggle"><input type="checkbox" checked data-series="' + i + '"> ' + l + '</label>').join('');
+  box.querySelectorAll('input').forEach(el => el.addEventListener('change', updateExplorerChart));
+}
+
+// Full-length series for the current variable/metric/grouping
+function allSeries(variable, metric) {
+  const dec = DECILES.map(d => DATA[metric][variable][d]);
+  if (getGrouping() !== 'groups') {
+    return dec.map((v, i) => ({ label: DECILE_LABELS[i], color: DECILE_COLORS[i], values: v }));
+  }
+  return GROUPS.map(g => ({
+    label: g.label, color: g.color,
+    values: DATA.t.map((_, t) => {
+      let sum = 0;
+      for (const i of g.idx) {
+        const v = dec[i][t];
+        if (v == null || isNaN(v)) return null;
+        sum += v;
+      }
+      return metric === 'quantiles' ? sum / g.idx.length : sum;
+    })
+  }));
+}
+
+function currentSelection() {
   const variable = document.querySelector('input[name="var"]:checked').value;
   const metric = document.querySelector('input[name="metric"]:checked').value;
-  const checkedDeciles = [...document.querySelectorAll('#decileToggles input:checked')].map(el => el.dataset.decile);
+  const on = [...document.querySelectorAll('#decileToggles input:checked')].map(el => +el.dataset.series);
+  const series = allSeries(variable, metric).filter((_, i) => on.includes(i))
+    .map(sr => Object.assign({}, sr, { values: sr.values.slice(rangeStartIdx, rangeEndIdx + 1) }));
+  return { variable, metric, series, labels: DATA.t.slice(rangeStartIdx, rangeEndIdx + 1) };
+}
+
+function updateExplorerChart() {
+  const sel = currentSelection();
   const useAsinh = document.getElementById('asinhScale').checked;
 
-  const labels = DATA.t.slice(rangeStartIdx, rangeEndIdx + 1);
-  const datasets = checkedDeciles.map(d => {
-    const idx = DECILES.indexOf(d);
-    let rawData = DATA[metric][variable][d].slice(rangeStartIdx, rangeEndIdx + 1);
-    let data = useAsinh ? rawData.map(v => v != null ? Math.asinh(v) : null) : rawData;
-    return {
-      label: DECILE_LABELS[idx],
-      data: data,
-      borderColor: DECILE_COLORS[idx],
-      backgroundColor: DECILE_COLORS[idx] + '20',
-      tension: 0.3,
-      fill: false
-    };
-  });
+  explorerChart.data.labels = sel.labels;
+  explorerChart.data.datasets = sel.series.map(sr => ({
+    label: sr.label,
+    data: useAsinh ? sr.values.map(v => v != null ? Math.asinh(v) : null) : sr.values,
+    borderColor: sr.color,
+    backgroundColor: sr.color + '20',
+    tension: 0.3,
+    fill: false
+  }));
+  explorerChart.options.plugins.annotation.annotations = getRecessionAnnotations(sel.labels);
 
-  explorerChart.data.labels = labels;
-  explorerChart.data.datasets = datasets;
-  explorerChart.options.plugins.annotation.annotations = getRecessionAnnotations(labels);
-
-  let yTitle = VAR_LABELS[variable] + ' \u2014 ' + metric.charAt(0).toUpperCase() + metric.slice(1);
+  let yTitle = VAR_LABELS[sel.variable] + ' — ' + METRIC_LABELS[sel.metric];
   if (useAsinh) yTitle += ' (IHS)';
   explorerChart.options.scales.y.title = {
     display: true,
@@ -1535,8 +1568,42 @@ function updateExplorerChart() {
     font: { family: "'Source Sans 3', sans-serif", size: 13, weight: '600' },
     color: '#4a4a5e'
   };
+  document.getElementById('explorerChart').setAttribute('aria-label', 'Line chart: ' + yTitle + ', ' +
+    sel.labels[0] + ' to ' + sel.labels[sel.labels.length - 1] + ', ' + sel.series.map(sr => sr.label).join(', '));
 
   explorerChart.update('none');
+}
+
+function exportName(ext) {
+  const sel = currentSelection();
+  return 'dd_' + sel.variable + '_' + sel.metric + '_' + getGrouping() + '.' + ext;
+}
+
+function saveFile(href, name) {
+  const a = document.createElement('a');
+  a.href = href; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+function downloadChartPng() {
+  const src = document.getElementById('explorerChart');
+  const c = document.createElement('canvas');
+  c.width = src.width; c.height = src.height;
+  const g = c.getContext('2d');
+  g.fillStyle = '#fdfcfa'; g.fillRect(0, 0, c.width, c.height);
+  g.drawImage(src, 0, 0);
+  saveFile(c.toDataURL('image/png'), exportName('png'));
+}
+
+function downloadChartCsv() {
+  const sel = currentSelection();
+  const rows = ['quarter,' + sel.series.map(sr => '"' + sr.label + '"').join(',')];
+  sel.labels.forEach((q, t) => rows.push(q + ',' + sel.series.map(sr => {
+    const v = sr.values[t]; return v == null || isNaN(v) ? '' : +v.toPrecision(10);
+  }).join(',')));
+  const url = URL.createObjectURL(new Blob([rows.join('\n') + '\n'], { type: 'text/csv' }));
+  saveFile(url, exportName('csv'));
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 // ═══ RANGE SLIDER ═══
