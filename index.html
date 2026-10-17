@@ -882,25 +882,25 @@ pre.standalone { border-radius: 10px; border-top: 1px solid var(--border); }
 .copy-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
 .copy-btn.copied { background: var(--green); color: #fff; border-color: var(--green); }
 
-/* DATA MAP (equation → files) */
-.eqmap { position: relative; width: min(960px, calc(100vw - 32px)); left: 50%; transform: translateX(-50%); margin: 36px 0 8px; }
-.eqmap-title { font-size: 14px; color: var(--ink-faint); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; text-align: center; margin-bottom: 10px; }
-.eqmap-eq { text-align: center; white-space: nowrap; overflow-x: auto; overflow-y: hidden; padding: 6px 4px 2px; font-size: 17px; }
+/* DATA MAP (equation in the middle, download cards above and below) */
+.eqmap { position: relative; width: min(1000px, calc(100vw - 32px)); left: 50%; transform: translateX(-50%); margin: 36px 0 0; scroll-margin-top: 72px; }
+.eqmap-title { font-size: 14px; color: var(--ink-faint); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; text-align: center; margin-bottom: 14px; }
+.eqmap-row { display: grid; gap: 16px; }
+.eqmap-top { grid-template-columns: 1.25fr 1fr; align-items: end; }
+.eqmap-bot { grid-template-columns: 1.5fr 1fr 1fr; align-items: start; }
+.eqmap-eq { text-align: center; white-space: nowrap; overflow-x: auto; overflow-y: hidden; padding: 6px 4px; margin: 54px 0; font-size: 19px; }
 .eqmap-eq .eq-t, .eqmap-eq .eq-o { display: inline-block; vertical-align: baseline; }
 .eqmap-eq .eq-o { margin: 0 2px; color: var(--ink-light); }
 .eqmap-eq .eq-t { color: var(--accent); }
 .eqmap-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
 .eqmap-svg path { fill: none; stroke: var(--ink-faint); stroke-width: 1.2; }
-.eqmap-cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 58px; }
-.eq-card { display: block; background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px 13px; box-shadow: var(--shadow); color: var(--ink-light); text-decoration: none; font-size: 12.5px; line-height: 1.45; transition: border-color 0.2s, transform 0.2s; }
-.eq-card:hover { border-color: var(--accent); transform: translateY(-2px); }
-.eq-card h4 { font-family: var(--font-body); font-size: 14px; color: var(--ink); margin: 0 0 4px; display: flex; align-items: center; gap: 6px; }
-.eq-badge { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 11px; font-family: var(--font-mono); flex: none; }
-.eq-files { font-family: var(--font-mono); font-size: 11.5px; color: var(--accent); margin-bottom: 5px; }
-.eq-go { display: block; margin-top: 6px; color: var(--accent); font-weight: 600; }
+.eq-card h3 { display: flex; align-items: center; gap: 8px; }
+.eq-badge { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 11.5px; font-family: var(--font-mono); flex: none; }
+.eq-desc { font-size: 13px; color: var(--ink-light); line-height: 1.5; margin: 0 0 10px; }
 @media (max-width: 820px) {
   .eqmap-svg { display: none; }
-  .eqmap-cards { grid-template-columns: 1fr; margin-top: 16px; }
+  .eqmap-top, .eqmap-bot { grid-template-columns: 1fr; }
+  .eqmap-eq { margin: 20px 0; font-size: 16px; }
 }
 
 /* DOWNLOADS */
@@ -1128,47 +1128,50 @@ items = CSV.read(Downloads.download(url * <span class="code-string">"items/dd_it
 
 
 
-    <div class="eqmap" id="eqmap">
-      <div class="eqmap-title">How the files fit together</div>
-      <div class="eqmap-eq">
-        <span class="eq-t" data-k="A">\(\displaystyle\underbrace{m_t}_{\textsf{A}}\)</span><span class="eq-o">\(\displaystyle=\sum_{k}\)</span><span class="eq-t" data-k="B">\(\displaystyle\underbrace{\omega_{kt}\,g(x_{kt})}_{\textsf{B}}\)</span><span class="eq-o">\(\displaystyle,\quad (\omega_{kt},x_{kt})=\mathcal{R}_k\big(\)</span><span class="eq-t" data-k="C">\(\displaystyle\underbrace{\theta^j_t}_{\textsf{C}}\)</span><span class="eq-o">\(\displaystyle;\)</span><span class="eq-t" data-k="D">\(\displaystyle\underbrace{A_t}_{\textsf{D}}\)</span><span class="eq-o">\(\displaystyle\big),\quad \theta^j_t=\bar\theta^j_t+\hat\Gamma^j\)</span><span class="eq-t" data-k="E">\(\displaystyle\underbrace{F^{(s)}_t}_{\textsf{E}}\)</span>
+    <div class="eqmap" id="downloads">
+      <div class="eqmap-title">The data, term by term</div>
+      <div class="eqmap-row eqmap-top">
+        <div class="dl-card eq-card" data-k="A">
+          <h3><span class="eq-badge">A</span>Group statistics</h3>
+          <p class="eq-desc">Means and shares by decile, quintile and bottom&nbsp;50 / next&nbsp;40 / top&nbsp;10, each quarter. Start here.</p>
+          <div class="dl-row"><span class="dl-name">dd_series</span><a class="btn btn-outline btn-xs" href="data/dd_series.csv" download>CSV</a><a class="btn btn-outline btn-xs" href="data/dd_series.dta" download>Stata</a></div>
+          <div class="dl-row"><span class="dl-name">dd_tidy_long (long format, by survey view)</span><a class="btn btn-outline btn-xs" href="data/dd_tidy_long.csv" download>CSV</a></div>
+          <div class="dl-row"><span class="dl-name">Balance sheets by DFA wealth group, all items</span><a class="btn btn-outline btn-xs" href="data/items/dd_items_SCF.csv" download>CSV</a><a class="btn btn-outline btn-xs" href="data/items/dd_items_SCF.dta" download>Stata</a></div>
+          <div class="dl-row"><span class="dl-name">By item (CSV)</span><a class="btn btn-outline btn-xs" href="data/items/real_estate_SCF.csv" download>Real estate</a><a class="btn btn-outline btn-xs" href="data/items/mortgages_SCF.csv" download>Mortgages</a><a class="btn btn-outline btn-xs" href="data/items/consumer_credit_SCF.csv" download>Consumer credit</a><a class="btn btn-outline btn-xs" href="data/items/pension_SCF.csv" download>Pensions</a><a class="btn btn-outline btn-xs" href="data/items/stocks_SCF.csv" download>Stocks*</a></div>
+          <p class="dl-note">*Stocks: next 40 and top 10 only. <a href="https://www.federalreserve.gov/releases/z1/dataviz/dfa/" target="_blank" rel="noopener">Compare: Fed DFA</a></p>
+        </div>
+        <div class="dl-card eq-card" data-k="B">
+          <h3><span class="eq-badge">B</span>Micro data</h3>
+          <p class="eq-desc">1,000 cells \(k\) per quarter (C&nbsp;&times;&nbsp;I&nbsp;&times;&nbsp;W deciles) with weight \(\omega\) and cell means \(x\): compute any statistic \(g\). The implicates repeat the file at five posterior draws and give its uncertainty.</p>
+          <div class="dl-row"><span class="dl-name">dd_master</span><a class="btn btn-outline btn-xs" href="data/dd_master.csv" download>CSV</a><a class="btn btn-outline btn-xs" href="data/dd_master.dta" download>Stata</a></div>
+          <div class="dl-row"><span class="dl-name">Implicates</span><a class="btn btn-outline btn-xs" href="data/implicates/PSID_synthetic_microdata_imp1.csv" download>1</a><a class="btn btn-outline btn-xs" href="data/implicates/PSID_synthetic_microdata_imp2.csv" download>2</a><a class="btn btn-outline btn-xs" href="data/implicates/PSID_synthetic_microdata_imp3.csv" download>3</a><a class="btn btn-outline btn-xs" href="data/implicates/PSID_synthetic_microdata_imp4.csv" download>4</a><a class="btn btn-outline btn-xs" href="data/implicates/PSID_synthetic_microdata_imp5.csv" download>5</a></div>
+        </div>
       </div>
-      <div class="eqmap-cards">
-        <a class="eq-card" data-k="A" href="#dl-main"><h4><span class="eq-badge">A</span>Group statistics</h4><div class="eq-files">dd_series &middot; dd_tidy_long</div>Means and shares by decile, quintile and bottom&nbsp;50 / next&nbsp;40 / top&nbsp;10, each quarter. Start here.<span class="eq-go">Download &darr;</span></a>
-        <a class="eq-card" data-k="B" href="#dl-main"><h4><span class="eq-badge">B</span>Micro data</h4><div class="eq-files">dd_master &middot; 5 implicates</div>1,000 cells \(k\) per quarter (C&nbsp;&times;&nbsp;I&nbsp;&times;&nbsp;W deciles): weight \(\omega\) and cell means \(x\). Compute any statistic \(g\); implicates give its uncertainty.<span class="eq-go">Download &darr;</span></a>
-        <a class="eq-card" data-k="C" href="#dl-model"><h4><span class="eq-badge">C</span>Coefficients</h4><div class="eq-files">&lt;survey&gt;_coefficients</div>1,730 Legendre coefficients per quarter for each survey view \(j\): marginals and copula. Rebuild the distribution at any point.<span class="eq-go">Download &darr;</span></a>
-        <a class="eq-card" data-k="D" href="#dl-model"><h4><span class="eq-badge">D</span>Aggregate anchors</h4><div class="eq-files">aggregate_anchors</div>Consumption, income and wealth per household from the national accounts, and the number of households. They set the dollar levels.<span class="eq-go">Download &darr;</span></a>
-        <a class="eq-card" data-k="E" href="#dl-unc"><h4><span class="eq-badge">E</span>Factors</h4><div class="eq-files">smoothed_factors &middot; draws &middot; bands</div>8 distributional and 11 aggregate factors that drive everything. The posterior draws \(s\) give bands for any statistic.<span class="eq-go">Download &darr;</span></a>
+      <div class="eqmap-eq">
+        <span class="eq-t" data-k="A" data-dir="up">\(\displaystyle\overbrace{m_t}^{\textsf{A}}\)</span><span class="eq-o">\(\displaystyle=\sum_{k}\)</span><span class="eq-t" data-k="B" data-dir="up">\(\displaystyle\overbrace{\omega_{kt}\,g(x_{kt})}^{\textsf{B}}\)</span><span class="eq-o">\(\displaystyle,\quad (\omega_{kt},x_{kt})=\mathcal{R}_k\big(\)</span><span class="eq-t" data-k="C">\(\displaystyle\underbrace{\theta^j_t}_{\textsf{C}}\)</span><span class="eq-o">\(\displaystyle;\)</span><span class="eq-t" data-k="D">\(\displaystyle\underbrace{A_t}_{\textsf{D}}\)</span><span class="eq-o">\(\displaystyle\big),\quad \theta^j_t=\bar\theta^j_t+\hat\Gamma^j\)</span><span class="eq-t" data-k="E">\(\displaystyle\underbrace{F^{(s)}_t}_{\textsf{E}}\)</span>
+      </div>
+      <div class="eqmap-row eqmap-bot">
+        <div class="dl-card eq-card" data-k="C">
+          <h3><span class="eq-badge">C</span>Coefficients</h3>
+          <p class="eq-desc">1,730 Legendre coefficients per quarter for each survey view \(j\): the marginals and the copula. In-sample files include the trend \(\bar\theta\); average-trend files are for counterfactuals.</p>
+          <div class="dl-row"><span class="dl-name">In-sample</span><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/PSID_coefficients_normal.csv">PSID</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SCF_coefficients_normal.csv">SCF</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/CEX_coefficients_normal.csv">CEX</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/CPS2_coefficients_normal.csv">CPS 67&ndash;92</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/CPS_coefficients_normal.csv">CPS 93+</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SIPP1_coefficients_normal.csv">SIPP 1</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SIPP2_coefficients_normal.csv">SIPP 2</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SIPP3_coefficients_normal.csv">SIPP 3</a></div>
+          <div class="dl-row"><span class="dl-name">Average trend</span><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/PSID_coefficients_average.csv">PSID</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SCF_coefficients_average.csv">SCF</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/CEX_coefficients_average.csv">CEX</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/CPS2_coefficients_average.csv">CPS 67&ndash;92</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/CPS_coefficients_average.csv">CPS 93+</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SIPP1_coefficients_average.csv">SIPP 1</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SIPP2_coefficients_average.csv">SIPP 2</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SIPP3_coefficients_average.csv">SIPP 3</a></div>
+        </div>
+        <div class="dl-card eq-card" data-k="D">
+          <h3><span class="eq-badge">D</span>Aggregate anchors</h3>
+          <p class="eq-desc">Consumption, income and wealth per household from the national accounts, and the number of households. They set the dollar levels.</p>
+          <div class="dl-row"><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/aggregate_anchors.csv">CSV</a></div>
+        </div>
+        <div class="dl-card eq-card" data-k="E">
+          <h3><span class="eq-badge">E</span>Factors</h3>
+          <p class="eq-desc">8 distributional and 11 aggregate factors that drive everything. The posterior draws \(s\) give bands for any statistic.</p>
+          <div class="dl-row"><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/smoothed_factors.csv">Smoothed (mode)</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/smoothed_factor_draws.csv">Posterior draws</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/smoothed_factors_bands.csv">5/50/95% bands</a></div>
+        </div>
       </div>
       <svg class="eqmap-svg" id="eqmapSvg" aria-hidden="true"><defs><marker id="eqArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9" style="fill:none;stroke:var(--ink-faint);stroke-width:1.5"/></marker></defs></svg>
     </div>
 
-    <div class="dl-grid" id="downloads">
-      <div class="dl-card" id="dl-main">
-        <h3>Main data</h3>
-        <div class="dl-row"><span class="dl-name">dd_series</span><a class="btn btn-outline btn-xs" href="data/dd_series.csv" download>CSV</a><a class="btn btn-outline btn-xs" href="data/dd_series.dta" download>Stata</a></div>
-        <div class="dl-row"><span class="dl-name">Synthetic microdata (dd_master)</span><a class="btn btn-outline btn-xs" href="data/dd_master.csv" download>CSV</a><a class="btn btn-outline btn-xs" href="data/dd_master.dta" download>Stata</a></div>
-        <div class="dl-row"><span class="dl-name">dd_tidy_long</span><a class="btn btn-outline btn-xs" href="data/dd_tidy_long.csv" download>CSV</a></div>
-        <p class="dl-note">dd_tidy_long: tidy long format; groups (bottom 50 / next 40 / top 10, quintiles, deciles) by survey.</p>
-      </div>
-      <div class="dl-card">
-        <h3>Balance sheets (DFA wealth groups)</h3>
-        <div class="dl-row"><span class="dl-name">All items</span><a class="btn btn-outline btn-xs" href="data/items/dd_items_SCF.csv" download>CSV</a><a class="btn btn-outline btn-xs" href="data/items/dd_items_SCF.dta" download>Stata</a></div>
-        <div class="dl-row"><span class="dl-name">By item (CSV)</span><a class="btn btn-outline btn-xs" href="data/items/real_estate_SCF.csv" download>Real estate</a><a class="btn btn-outline btn-xs" href="data/items/mortgages_SCF.csv" download>Mortgages</a><a class="btn btn-outline btn-xs" href="data/items/consumer_credit_SCF.csv" download>Consumer credit</a><a class="btn btn-outline btn-xs" href="data/items/pension_SCF.csv" download>Pensions</a><a class="btn btn-outline btn-xs" href="data/items/stocks_SCF.csv" download>Stocks*</a></div>
-        <p class="dl-note">*Stocks: next 40 and top 10 only. <a href="https://www.federalreserve.gov/releases/z1/dataviz/dfa/" target="_blank" rel="noopener">Compare: Fed DFA</a></p>
-      </div>
-      <div class="dl-card" id="dl-unc">
-        <h3>Uncertainty</h3>
-        <div class="dl-row"><span class="dl-name">Microdata implicates</span><a class="btn btn-outline btn-xs" href="data/implicates/PSID_synthetic_microdata_imp1.csv" download>1</a><a class="btn btn-outline btn-xs" href="data/implicates/PSID_synthetic_microdata_imp2.csv" download>2</a><a class="btn btn-outline btn-xs" href="data/implicates/PSID_synthetic_microdata_imp3.csv" download>3</a><a class="btn btn-outline btn-xs" href="data/implicates/PSID_synthetic_microdata_imp4.csv" download>4</a><a class="btn btn-outline btn-xs" href="data/implicates/PSID_synthetic_microdata_imp5.csv" download>5</a></div>
-        <div class="dl-row"><span class="dl-name">Factors</span><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/smoothed_factor_draws.csv">Posterior draws</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/smoothed_factors_bands.csv">5/50/95% bands</a></div>
-        <p class="dl-note">Main data are posterior point estimates; these files carry the posterior spread.</p>
-      </div>
-      <div class="dl-card" id="dl-model">
-        <h3>Model objects</h3>
-        <div class="dl-row"><span class="dl-name">Legendre coefficients, in-sample</span><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/PSID_coefficients_normal.csv">PSID</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SCF_coefficients_normal.csv">SCF</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/CEX_coefficients_normal.csv">CEX</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/CPS2_coefficients_normal.csv">CPS 67&ndash;92</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/CPS_coefficients_normal.csv">CPS 93+</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SIPP1_coefficients_normal.csv">SIPP 1</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SIPP2_coefficients_normal.csv">SIPP 2</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SIPP3_coefficients_normal.csv">SIPP 3</a></div>
-        <div class="dl-row"><span class="dl-name">Legendre coefficients, average trend</span><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/PSID_coefficients_average.csv">PSID</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SCF_coefficients_average.csv">SCF</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/CEX_coefficients_average.csv">CEX</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/CPS2_coefficients_average.csv">CPS 67&ndash;92</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/CPS_coefficients_average.csv">CPS 93+</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SIPP1_coefficients_average.csv">SIPP 1</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SIPP2_coefficients_average.csv">SIPP 2</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SIPP3_coefficients_average.csv">SIPP 3</a></div>
-        <div class="dl-row"><span class="dl-name">Other</span><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/smoothed_factors.csv">Smoothed factors</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/aggregate_anchors.csv">Aggregate anchors</a></div>
-      </div>
+    <div class="dl-grid">
       <div class="dl-card">
         <h3>Survey inputs</h3>
         <div class="dl-row"><span class="dl-name">Processed microdata (.csv.gz)</span><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/SCF.csv.gz">SCF</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/PSID.csv.gz">PSID</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/CEX.csv.gz">CEX</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/CPS2.csv.gz">CPS 67&ndash;92</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/CPS.csv.gz">CPS 93&ndash;22</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/SIPP1.csv.gz">SIPP 83&ndash;95</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/SIPP2.csv.gz">SIPP 96&ndash;12</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/SIPP3.csv.gz">SIPP 13&ndash;22</a></div>
@@ -1439,7 +1442,7 @@ const RECESSIONS = [
 
 // Data map: arrows from each underbraced term to its file card
 function drawEqmap() {
-  var map = document.getElementById('eqmap'), svg = document.getElementById('eqmapSvg');
+  var map = document.getElementById('downloads'), svg = document.getElementById('eqmapSvg');
   if (!map || !svg) return;
   svg.querySelectorAll('path.eq-link').forEach(function(p) { p.remove(); });
   if (window.innerWidth <= 820) return;
@@ -1448,8 +1451,9 @@ function drawEqmap() {
     var c = map.querySelector('.eq-card[data-k="' + t.dataset.k + '"]');
     if (!c) return;
     var a = t.getBoundingClientRect(), b = c.getBoundingClientRect();
-    var x1 = a.left + a.width / 2 - box.left, y1 = a.bottom - box.top + 4;
-    var x2 = b.left + b.width / 2 - box.left, y2 = b.top - box.top - 3;
+    var up = t.dataset.dir === 'up';
+    var x1 = a.left + a.width / 2 - box.left, y1 = (up ? a.top - 4 : a.bottom + 4) - box.top;
+    var x2 = Math.min(Math.max(a.left + a.width / 2, b.left + 40), b.right - 40) - box.left, y2 = (up ? b.bottom + 3 : b.top - 3) - box.top;
     var my = (y1 + y2) / 2;
     var p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     p.setAttribute('class', 'eq-link');
