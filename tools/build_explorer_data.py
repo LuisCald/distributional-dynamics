@@ -1,12 +1,12 @@
 """Rebuild the Data Explorer's embedded data (const DATA in index.html; data/bivar.json)
 from the published data products, so the charts match the downloads.
 
-    python3 tools/build_explorer_data.py            # reads data/dd_series.csv, data/dd_master.csv
+    python3 tools/build_explorer_data.py            # reads data/dd_series.csv, data/dd_microdata.csv
 
 DATA        univariate, PSID view, decile groups D1..D10: share of total, group total (trillions of
             2019Q4 USD) and mean per household (2019Q4 USD; the `quantile_*` columns), 1962-Q3 onward.
 BIVAR_DATA  bivariate: 10x10 population shares of decile cells. C x I and C x W: PSID view, the
-            synthetic-microdata copula grid (dd_master.csv, cop_share) summed over the third variable,
+            synthetic-microdata copula grid (dd_microdata.csv, cop_share) summed over the third variable,
             quarters with PSID consumption (1999-Q2 on). I x W: SCF view, the income x wealth copula
             cells of SCF_functional_data.csv (ciw_1jk), 1962-Q3 on. Each pair has its own quarters
             (t_ci, t_cw, t_iw).
@@ -17,7 +17,7 @@ import numpy as np, pandas as pd
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HTML = os.path.join(ROOT, "index.html")
 series = pd.read_csv(os.path.join(ROOT, "data", "dd_series.csv"))
-master = pd.read_csv(os.path.join(ROOT, "data", "dd_master.csv"))
+master = pd.read_csv(os.path.join(ROOT, "data", "dd_microdata.csv"))
 # SCF copula cells are not hosted on the site; read them from DD_data (local checkout or GitHub)
 SCF_FD = os.environ.get("SCF_FD", "https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SCF_functional_data.csv")
 
