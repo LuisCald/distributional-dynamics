@@ -1,11 +1,11 @@
-"""Build data/explorer_bands.json: 90% posterior bands for the Data Explorer (loaded only when a reader turns
+"""Build data/explorer_bands.json: 95% posterior bands for the Data Explorer (loaded only when a reader turns
 the band on, so the page itself loads no more data).
 
     python3 tools/build_explorer_bands.py <explorer_bands.csv>
 
 The CSV comes from DD_replication's code/julia/export_explorer_bands.jl: 200 posterior draws of the October
-2026 estimates, each with a drawn path of the factors (parameter and factor uncertainty), PSID view; 5th and
-95th percentiles of the decile groups' share, total and mean, and of bottom 50 / next 40 / top 10 computed per
+2026 estimates, each with a drawn path of the factors (parameter and factor uncertainty), PSID view; 2.5th and
+97.5th percentiles of the decile groups' share, total and mean, and of bottom 50 / next 40 / top 10 computed per
 draw (not by summing decile bands). Quarters that are blank in the published series stay blank here.
 """
 import json, os, sys
@@ -37,7 +37,7 @@ for metric in COL:
             s = sub[sub.group == group].set_index("time").reindex(T)
             mask = np.logical_and.reduce([pub_mask(var, metric, d) for d in members])
             scale = 1.0   # levels are already in trillions, as in DATA
-            for side, col in (("lo", "p05"), ("hi", "p95")):
+            for side, col in (("lo", "p025"), ("hi", "p975")):
                 v = s[col].to_numpy() * scale
                 out[side][metric][var][key] = [None if (not m or not np.isfinite(x)) else round(float(x), ND[metric]) for x, m in zip(v, mask)]
 
