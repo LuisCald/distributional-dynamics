@@ -588,6 +588,8 @@ fieldset.control-group { border: 0; min-width: 0; }
 }
 
 .log-toggle input { accent-color: var(--accent); }
+.toggle-stack { display: flex; flex-direction: column; gap: 6px; margin-left: auto; }
+.toggle-stack .log-toggle { margin-left: 0; }
 
 /* EXPLORER TABS */
 .explorer-tabs {
@@ -1260,9 +1262,14 @@ items = CSV.read(Downloads.download(url * <span class="code-string">"items/dd_it
             <legend>Show</legend>
             <div class="decile-toggles" id="decileToggles"></div>
           </fieldset>
-          <label class="log-toggle">
-            <input type="checkbox" id="asinhScale"> Compress scale (IHS)
-          </label>
+          <div class="toggle-stack">
+            <label class="log-toggle">
+              <input type="checkbox" id="bandToggle"> 90% band
+            </label>
+            <label class="log-toggle">
+              <input type="checkbox" id="asinhScale"> Compress scale (IHS)
+            </label>
+          </div>
         </div>
         <div class="chart-container">
           <canvas id="explorerChart" role="img" aria-label="Line chart of the selected distribution series over time"></canvas>
@@ -1281,7 +1288,7 @@ items = CSV.read(Downloads.download(url * <span class="code-string">"items/dd_it
           <button type="button" class="copy-btn" id="dlPng">Download PNG</button>
           <button type="button" class="copy-btn" id="dlCsv">Download CSV</button>
         </div>
-        <p class="chart-note">Source: Bayer, Calderon &amp; Kuhn (2026), PSID view. Decile groups D1 (bottom 10%) to D10 (top 10%); totals in trillions, means per household, both in 2019Q4 USD (CPI-U). Wealth starts in 1984 (PSID), consumption in 1999.</p>
+        <p class="chart-note">Source: Bayer, Calderon &amp; Kuhn (2026), PSID view. Decile groups D1 (bottom 10%) to D10 (top 10%); totals in trillions, means per household, both in 2019Q4 USD (CPI-U). Wealth starts in 1984 (PSID), consumption in 1999. The 90% band covers parameter and factor uncertainty (200 posterior draws).</p>
       </div>
 
       <div id="panel-bivariate" class="explorer-panel">
@@ -1465,6 +1472,7 @@ let BIVAR_DATA = null; // data/bivar.json, fetched when the joint-distribution t
 
 // ═══ CONSTANTS ═══
 const DECILES = ['0.1','0.2','0.3','0.4','0.5','0.6','0.7','0.8','0.9','1.0'];
+let BANDS = null;   // 90% posterior bands, loaded on demand
 const DECILE_COLORS = [
   '#b3d4f7','#8cbcee','#65a4e5','#4a8fd9','#3479cc',
   '#2563b0','#1e4f94','#173b78','#102a5c','#08183a'
@@ -1548,6 +1556,13 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('dlPng').addEventListener('click', downloadChartPng);
   document.getElementById('dlCsv').addEventListener('click', downloadChartCsv);
   document.getElementById('asinhScale').addEventListener('change', updateExplorerChart);
+  document.getElementById('bandToggle').addEventListener('change', e => {
+    if (!e.target.checked || BANDS) { updateExplorerChart(); return; }
+    e.target.disabled = true;
+    fetch('data/explorer_bands.json').then(r => r.json()).then(b => { BANDS = b; })
+      .catch(() => { e.target.checked = false; })
+      .finally(() => { e.target.disabled = false; updateExplorerChart(); });
+  });
 
 });
 
@@ -1590,7 +1605,8 @@ function initExplorerChart() {
           titleFont: { family: "'DM Mono', monospace", size: 12 },
           bodyFont: { family: "'Source Sans 3', sans-serif", size: 13 },
           padding: 12,
-          cornerRadius: 8
+          cornerRadius: 8,
+          filter: item => !item.dataset.isBand
         }
       },
       scales: {
@@ -1644,10 +1660,10 @@ function buildSeriesToggles() {
 function allSeries(variable, metric) {
   const dec = DECILES.map(d => DATA[metric][variable][d]);
   if (getGrouping() !== 'groups') {
-    return dec.map((v, i) => ({ label: DECILE_LABELS[i], color: DECILE_COLORS[i], values: v }));
+    return dec.map((v, i) => ({ label: DECILE_LABELS[i], color: DECILE_COLORS[i], key: DECILES[i], values: v }));
   }
-  return GROUPS.map(g => ({
-    label: g.label, color: g.color,
+  return GROUPS.map((g, gi) => ({
+    label: g.label, color: g.color, key: 'g' + gi,
     values: DATA.t.map((_, t) => {
       let sum = 0;
       for (const i of g.idx) {
@@ -1666,6 +1682,13 @@ function currentSelection() {
   const on = [...document.querySelectorAll('#decileToggles input:checked')].map(el => +el.dataset.series);
   const series = allSeries(variable, metric).filter((_, i) => on.includes(i))
     .map(sr => Object.assign({}, sr, { values: sr.values.slice(rangeStartIdx, rangeEndIdx + 1) }));
+  // 90% posterior band (data/explorer_bands.json, fetched the first time the band is turned on)
+  if (BANDS && document.getElementById('bandToggle').checked) {
+    series.forEach(sr => {
+      const lo = BANDS.lo[metric][variable][sr.key], hi = BANDS.hi[metric][variable][sr.key];
+      if (lo && hi) { sr.lo = lo.slice(rangeStartIdx, rangeEndIdx + 1); sr.hi = hi.slice(rangeStartIdx, rangeEndIdx + 1); }
+    });
+  }
   return { variable, metric, series, labels: DATA.t.slice(rangeStartIdx, rangeEndIdx + 1) };
 }
 
@@ -1673,15 +1696,26 @@ function updateExplorerChart() {
   const sel = currentSelection();
   const useAsinh = document.getElementById('asinhScale').checked;
 
+  const tr = vals => useAsinh ? vals.map(v => v != null ? Math.asinh(v) : null) : vals;
   explorerChart.data.labels = sel.labels;
-  explorerChart.data.datasets = sel.series.map(sr => ({
-    label: sr.label,
-    data: useAsinh ? sr.values.map(v => v != null ? Math.asinh(v) : null) : sr.values,
-    borderColor: sr.color,
-    backgroundColor: sr.color + '20',
-    tension: 0.3,
-    fill: false
-  }));
+  explorerChart.data.datasets = sel.series.flatMap(sr => {
+    const line = {
+      label: sr.label,
+      data: tr(sr.values),
+      borderColor: sr.color,
+      backgroundColor: sr.color + '20',
+      tension: 0.3,
+      fill: false
+    };
+    if (!sr.lo) return [line];
+    // band: invisible lower edge, upper edge filled down to it, then the line on top
+    const edge = { isBand: true, borderWidth: 0, pointRadius: 0, pointHoverRadius: 0, tension: 0.3 };
+    return [
+      Object.assign({ label: sr.label + ' (5%)', data: tr(sr.lo), fill: false, borderColor: 'transparent' }, edge),
+      Object.assign({ label: sr.label + ' (95%)', data: tr(sr.hi), fill: '-1', borderColor: 'transparent', backgroundColor: sr.color + '33' }, edge),
+      line
+    ];
+  });
   explorerChart.options.plugins.annotation.annotations = getRecessionAnnotations(sel.labels);
 
   let yTitle = VAR_LABELS[sel.variable] + ' — ' + METRIC_LABELS[sel.metric];
