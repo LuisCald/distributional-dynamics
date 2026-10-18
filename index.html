@@ -1405,11 +1405,12 @@ items = CSV.read(Downloads.download(url * <span class="code-string">"items/dd_it
       </div>
       <div class="dl-card">
         <h3>Rebuild the estimates: DD_replication</h3>
-        <p class="eq-desc">The paper&rsquo;s full replication package, in two steps. The processed survey files and aggregate series it reads are included.</p>
+        <p class="eq-desc">The paper&rsquo;s replication package. The processed survey files and aggregate series it reads are included. Reproducing the baseline estimates takes two steps:</p>
         <ol class="code-list">
-          <li><strong>Estimation</strong> (up to 24 hours): fit the model. Optional, since the estimated parameters are included.</li>
-          <li><strong>Results</strong> (under 30 minutes): produce the paper&rsquo;s figures and tables.</li>
+          <li><strong>Estimation</strong> (up to 24 hours): fit the baseline model. Optional, since the estimated parameters are included.</li>
+          <li><strong>Results</strong> (under 30 minutes): produce the baseline figures and tables.</li>
         </ol>
+        <p class="eq-desc">The full replication also re-estimates the robustness and simulation exercises, which takes several days depending on the number of cores.</p>
         <div class="dl-row"><a class="btn btn-outline btn-xs" href="https://github.com/LuisCald/DD_replication" target="_blank" rel="noopener">GitHub</a><a class="btn btn-outline btn-xs" href="https://codeload.github.com/LuisCald/DD_replication/zip/refs/heads/main">Download zip</a></div>
       </div>
     </div>
