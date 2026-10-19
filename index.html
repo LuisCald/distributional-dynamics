@@ -933,6 +933,15 @@ pre.standalone { border-radius: 10px; border-top: 1px solid var(--border); }
 .btn-xs { padding: 3px 10px; font-size: 12.5px; border-radius: 6px; border-width: 1px; }
 .dl-note { font-size: 12.5px; color: var(--ink-faint); line-height: 1.5; margin: 6px 0 0; }
 .dl-note a { color: var(--accent); }
+.faq-list { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+.faq-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 0 18px; box-shadow: var(--shadow); }
+.faq-item summary { cursor: pointer; padding: 14px 0; font-weight: 600; color: var(--ink); list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after { content: "+"; color: var(--accent); font-weight: 400; font-size: 20px; line-height: 1; }
+.faq-item[open] summary::after { content: "\2212"; }
+.faq-item[open] { padding-bottom: 14px; }
+.faq-item .eq-desc { margin-top: 0; }
+#faq .prose a { color: var(--accent); }
 .code-list { font-size: 13px; color: var(--ink-light); line-height: 1.5; margin: 0 0 12px 18px; }
 .code-list li { margin-bottom: 4px; }
 @media (max-width: 768px) { .dl-grid { grid-template-columns: 1fr; } }
@@ -1040,6 +1049,7 @@ footer .footer-bottom .brand {
     <a href="#overview" class="brand">Distributional Dynamics</a>
     <div class="links">
       <a href="#data">Data</a>
+      <a href="#faq">FAQ</a>
       <a href="#explorer">Explore</a>
       <a href="#methodology">Methodology</a>
       <a href="#code">Code</a>
@@ -1094,6 +1104,7 @@ items = CSV.read(Downloads.download(url * <span class="code-string">"items/dd_it
       <a href="#downloads" class="btn btn-primary">Get the data</a>
       <a href="pdfs/BCK_DistributionalDynamics.pdf" target="_blank" rel="noopener" class="btn btn-outline">Read the paper</a>
       <a href="#code" class="btn btn-outline">Code</a>
+      <a href="#faq" class="btn btn-outline">What are you looking for?</a>
     </div>
   </div>
 </header>
@@ -1215,6 +1226,83 @@ items = CSV.read(Downloads.download(url * <span class="code-string">"items/dd_it
     </div>
 
     <p class="dl-note" style="margin-top:20px">Data: <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>, free to use with attribution (please cite the paper). Code: MIT.</p>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- FAQ: WHAT ARE YOU LOOKING FOR? -->
+<section id="faq">
+  <div class="container">
+    <div class="section-label">FAQ</div>
+    <h2>What are you looking for?</h2>
+    <p class="prose">Pick your question for a short description of the product and a direct download. Everything is quarterly and free to use (please cite the paper). The <a href="pdfs/DD_data_guide.pdf" target="_blank" rel="noopener">data guide (PDF)</a> describes all of it in plain English.</p>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>Inequality over time: top 10%, bottom 50%, deciles or quintiles?</summary>
+        <p class="eq-desc">Mean per household and share of the total for consumption, income and wealth, by decile, quintile and bottom&nbsp;50 / next&nbsp;40 / top&nbsp;10. Two views of the same distribution: as the SCF measures it (income and wealth, 1962-Q3 to 2024-Q1, best for the top tail) and as the PSID measures it (income from 1968, wealth from 1984, consumption from 1999). Use <code>dd_tidy_long</code> for one row per quarter and group, <code>dd_series</code> for one row per quarter with decile columns.</p>
+        <div class="dl-row"><span class="dl-name"><code>dd_tidy_long</code></span><a class="btn btn-outline btn-xs" href="data/dd_tidy_long.csv" download>CSV</a></div>
+        <div class="dl-row"><span class="dl-name"><code>dd_series</code></span><a class="btn btn-outline btn-xs" href="data/dd_series.csv" download>CSV</a><a class="btn btn-outline btn-xs" href="data/dd_series.dta" download>Stata</a><a class="btn btn-outline btn-xs" href="#explorer">Plot it in the Explorer</a></div>
+      </details>
+      <details class="faq-item">
+        <summary>Consumption by income or wealth group (cross-tabulations)?</summary>
+        <p class="eq-desc">Each variable within groups ranked by another: for example consumption by income quintile, or wealth of the top 10% by income. Quintiles and bottom&nbsp;50 / next&nbsp;40 / top&nbsp;10, in every direction for the PSID view; income by wealth group and wealth by income group for the SCF view. They come from the estimated joint distribution, so they add up to the totals.</p>
+        <div class="dl-row"><span class="dl-name"><code>dd_tidy_long</code> <span class="dl-sub">rows where <code>ranked_by</code> differs from <code>variable</code></span></span><a class="btn btn-outline btn-xs" href="data/dd_tidy_long.csv" download>CSV</a></div>
+      </details>
+      <details class="faq-item">
+        <summary>Household-level data to compute your own statistics?</summary>
+        <p class="eq-desc">Synthetic micro data for the PSID view: each quarter from 1984-Q2 to 2024-Q1, households are grouped into 1,000 cells by their consumption, income and wealth decile. Each cell has a population weight (<code>cop_share</code>) and its mean consumption (from 1999-Q2), income and wealth. Weighted means, shares or your own groups work as with survey data.</p>
+        <div class="dl-row"><span class="dl-name"><code>dd_microdata</code></span><a class="btn btn-outline btn-xs" href="data/dd_microdata.csv" download>CSV</a><a class="btn btn-outline btn-xs" href="data/dd_microdata.dta" download>Stata</a></div>
+      </details>
+      <details class="faq-item">
+        <summary>Standard errors and uncertainty?</summary>
+        <p class="eq-desc">The micro data come in five implicates, the same file at five draws from the posterior. Compute your statistic on each and combine them as with the SCF implicates. For the factors there are 200 posterior draws and 5/50/95% bands. The Explorer shows a 95% band.</p>
+        <div class="dl-row"><span class="dl-name"><code>PSID_synthetic_microdata_imp1&ndash;5</code></span><a class="btn btn-outline btn-xs" href="data/implicates/PSID_synthetic_microdata_imp1.csv" download>1</a><a class="btn btn-outline btn-xs" href="data/implicates/PSID_synthetic_microdata_imp2.csv" download>2</a><a class="btn btn-outline btn-xs" href="data/implicates/PSID_synthetic_microdata_imp3.csv" download>3</a><a class="btn btn-outline btn-xs" href="data/implicates/PSID_synthetic_microdata_imp4.csv" download>4</a><a class="btn btn-outline btn-xs" href="data/implicates/PSID_synthetic_microdata_imp5.csv" download>5</a></div>
+        <div class="dl-row"><span class="dl-name"><code>smoothed_factor_draws</code> <span class="dl-sub">and bands</span></span><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/smoothed_factor_draws.csv">Draws</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/smoothed_factors_bands.csv">Bands</a></div>
+      </details>
+      <details class="faq-item">
+        <summary>Quarterly factor estimates, 1962&ndash;2024?</summary>
+        <p class="eq-desc">The eight distributional factors that drive the joint distribution (<code>x1</code>&ndash;<code>x8</code>), with their lags and the aggregate factors, 1962-Q3 to 2024-Q1: the posterior mode, 200 posterior draws, and 5/50/95% bands. Feed a factor path (ours or a counterfactual) to the DD_data scripts to get the distribution it implies.</p>
+        <div class="dl-row"><span class="dl-name"><code>smoothed_factors</code></span><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/smoothed_factors.csv">Mode</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/smoothed_factor_draws.csv">Draws</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/smoothed_factors_bands.csv">Bands</a></div>
+      </details>
+      <details class="faq-item">
+        <summary>Household balance sheets?</summary>
+        <p class="eq-desc">Real estate, mortgages, consumer credit, pensions (from 1983) and stocks: mean per household and share of the total by wealth group (bottom&nbsp;50 / next&nbsp;40 / top&nbsp;10, as in the Fed&rsquo;s Distributional Financial Accounts), by income quintile and by own decile, SCF view. Stocks are published for the next&nbsp;40 and top&nbsp;10 only.</p>
+        <div class="dl-row"><span class="dl-name"><code>dd_items_SCF</code> <span class="dl-sub">all items</span></span><a class="btn btn-outline btn-xs" href="data/items/dd_items_SCF.csv" download>CSV</a><a class="btn btn-outline btn-xs" href="data/items/dd_items_SCF.dta" download>Stata</a></div>
+        <div class="dl-row"><span class="dl-name"><span class="dl-sub">one item (CSV)</span></span><a class="btn btn-outline btn-xs" href="data/items/real_estate_SCF.csv" download>Real estate</a><a class="btn btn-outline btn-xs" href="data/items/mortgages_SCF.csv" download>Mortgages</a><a class="btn btn-outline btn-xs" href="data/items/consumer_credit_SCF.csv" download>Consumer credit</a><a class="btn btn-outline btn-xs" href="data/items/pension_SCF.csv" download>Pensions</a><a class="btn btn-outline btn-xs" href="data/items/stocks_SCF.csv" download>Stocks</a></div>
+      </details>
+      <details class="faq-item">
+        <summary>Another statistic: a percentile, a Gini, your own groups?</summary>
+        <p class="eq-desc">The distribution of every quarter is stored as polynomial coefficients, one file per survey view. Our Python and Julia scripts turn them into shares, means, quantiles, group means across variables or micro data, with posterior bands.</p>
+        <div class="dl-row"><span class="dl-name"><code>&lt;survey&gt;_coefficients_normal</code></span><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/PSID_coefficients_normal.csv">PSID</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/SCF_coefficients_normal.csv">SCF</a><a class="btn btn-outline btn-xs" href="#downloads">All surveys</a></div>
+        <div class="dl-row"><span class="dl-name"><span class="dl-sub">scripts</span></span><a class="btn btn-outline btn-xs" href="https://github.com/LuisCald/DD_data/tree/main/python" target="_blank" rel="noopener">Python</a><a class="btn btn-outline btn-xs" href="https://github.com/LuisCald/DD_data/tree/main/julia" target="_blank" rel="noopener">Julia</a></div>
+      </details>
+      <details class="faq-item">
+        <summary>The national-accounts totals the estimates are anchored to?</summary>
+        <p class="eq-desc">Consumption, income and wealth per household from the national accounts, and the number of households. They set the dollar levels of every output.</p>
+        <div class="dl-row"><span class="dl-name"><code>aggregate_anchors</code></span><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_data/main/data/aggregate_anchors.csv">CSV</a></div>
+      </details>
+      <details class="faq-item">
+        <summary>The survey data the model starts from?</summary>
+        <p class="eq-desc">The cleaned household files from the CPS, PSID, CEX, SCF and SIPP that the estimation reads (gzipped CSV). They are derived from the original surveys, whose providers&rsquo; terms apply.</p>
+        <div class="dl-row"><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/SCF.csv.gz">SCF</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/PSID.csv.gz">PSID</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/CEX.csv.gz">CEX</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/CPS.csv.gz">CPS</a><a class="btn btn-outline btn-xs" href="https://raw.githubusercontent.com/LuisCald/DD_replication/main/data/processed/SIPP3.csv.gz">SIPP</a><a class="btn btn-outline btn-xs" href="https://github.com/LuisCald/DD_replication/tree/main/data/processed" target="_blank" rel="noopener">All files</a></div>
+      </details>
+      <details class="faq-item">
+        <summary>Replicate the estimates or change the model?</summary>
+        <p class="eq-desc">The replication package has the code, the processed inputs and the estimated parameters. Reproducing the baseline results takes under 30 minutes; re-estimating the baseline model takes up to 24 hours.</p>
+        <div class="dl-row"><a class="btn btn-outline btn-xs" href="https://github.com/LuisCald/DD_replication" target="_blank" rel="noopener">DD_replication on GitHub</a><a class="btn btn-outline btn-xs" href="#code">More in Code</a></div>
+      </details>
+      <details class="faq-item">
+        <summary>Everything in one document?</summary>
+        <p class="eq-desc">The data guide explains every product, its coverage and its caveats in plain English. The codebook lists every column of every file.</p>
+        <div class="dl-row"><a class="btn btn-outline btn-xs" href="pdfs/DD_data_guide.pdf" target="_blank" rel="noopener">Data guide (PDF)</a><a class="btn btn-outline btn-xs" href="https://github.com/LuisCald/DD_data/blob/main/docs/codebook.md" target="_blank" rel="noopener">Codebook</a></div>
+      </details>
+      <details class="faq-item">
+        <summary>Something missing, or a question?</summary>
+        <p class="eq-desc">Open an issue on GitHub or write to us.</p>
+        <div class="dl-row"><a class="btn btn-outline btn-xs" href="https://github.com/LuisCald/DD_data/issues" target="_blank" rel="noopener">GitHub issues</a><a class="btn btn-outline btn-xs" href="mailto:luis.calderon@uni-bonn.de">Email</a></div>
+      </details>
+    </div>
   </div>
 </section>
 
